@@ -3,7 +3,7 @@ services:
   mongodb:
     image: mongo
     ports:
-      - 8081:8081
+      - 27017:27017
     environment:
       MONGO_INITDB_DATABASE: phoenix
   redis:
