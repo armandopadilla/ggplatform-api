@@ -1,19 +1,17 @@
-// Mongo connection stuff here
+/**
+ * Get a specific account
+ *
+ */
 const Joi = require('joi');
+const ObjectId = require('mongodb').ObjectID;
 const { response } = require('../../../utils');
-const MongoClient = require('mongodb').MongoClient;
-const dbName = 'phoenix';
-
-//connection ulr
-const url = 'mongodb://localhost:27017';
 
 const handler = async (req, res) => {
   const { accountId } = req.params;
+  const { db } = res.context.config;
 
   try {
-    const dbConn = await MongoClient.connect(url);
-    const db = dbConn.db(dbName);
-    const account = await db.collection('accounts').findOne({ id: accountId });
+    const account = await db.collection('accounts').findOne({ _id: ObjectId(accountId) });
 
     if (account) return response.success(account);
     return response.error('Account not found', 404);
@@ -30,8 +28,11 @@ module.exports = fastify => fastify.route({
   handler,
   schema: {
     params: {
-      accountId: Joi.number()
+      accountId: Joi.string().required()
     }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema)
+  schemaCompiler: schema => data => Joi.validate(data, schema),
+  config: {
+    db: fastify.mongo.db // This seems off.
+  }
 });

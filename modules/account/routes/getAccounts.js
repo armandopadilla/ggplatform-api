@@ -1,15 +1,8 @@
-// Mongo connection stuff here
 const { response } = require('../../../utils');
-const MongoClient = require('mongodb').MongoClient;
-const dbName = 'phoenix';
-
-//connection ulr
-const url = 'mongodb://localhost:27017';
 
 const handler = async (req, res) => {
+  const { db } = res.context.config;
   try {
-    const dbConn = await MongoClient.connect(url);
-    const db = dbConn.db(dbName);
     const accounts = await db.collection('accounts').find({}).toArray();
 
     return response.success(accounts || []);
@@ -23,5 +16,8 @@ const handler = async (req, res) => {
 module.exports = fastify => fastify.route({
   method: 'GET',
   url: '/list',
-  handler
+  handler,
+  config: {
+    db: fastify.mongo.db // This seems off.
+  }
 });

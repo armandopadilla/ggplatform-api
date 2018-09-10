@@ -1,6 +1,12 @@
 const fastify = require('fastify')();
 
+// Register plugins
 fastify.register(require('fastify-boom'));
+fastify.register(require('fastify-mongodb'), {
+  forceClose: true,
+  url: 'mongodb://localhost:27017/phoenix'
+});
+
 fastify.register(require('./modules/account'), { prefix: '/account' });
 
 const start = async () => {
