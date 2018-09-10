@@ -2,17 +2,13 @@
 // @todo - validation for status
 // @todo - logging to make sure we have an audit trail
 
-// Mongo connection stuff here
 const Joi = require('joi');
+const ObjectID = require('mongodb').ObjectID;
 const { response } = require('../../../utils');
-const MongoClient = require('mongodb').MongoClient;
-const dbName = 'phoenix';
-
-//connection ulr
-const url = 'mongodb://localhost:27017';
 
 const handler = async (req, res) => {
   const { accountId } = req.params;
+  const { db } = res.context.config;
   const {
     status
   } = req.body;
@@ -23,10 +19,8 @@ const handler = async (req, res) => {
   } ;
 
   try {
-    const dbConn = await MongoClient.connect(url);
-    const db = dbConn.db(dbName);
     const data = await db.collection('accounts').updateOne(
-      { id: accountId },
+      { id: ObjectID(accountId) },
       {$set: updateObj}
     );
 
@@ -54,5 +48,8 @@ module.exports = fastify => fastify.route({
       dob: Joi.string().required()
     }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema)
+  schemaCompiler: schema => data => Joi.validate(data, schema),
+  config: {
+    db: fastify.mongo.db // This seems off.
+  }
 });
