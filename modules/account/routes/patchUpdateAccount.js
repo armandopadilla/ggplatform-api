@@ -1,7 +1,10 @@
-// Mongo connection stuff here
+/**
+ * Update a specific account
+ *
+ */
 const Joi = require('joi');
 const ObjectID = require('mongodb').ObjectID;
-const { response } = require('../../../utils');
+const { response, auth } = require('../../../utils');
 
 const handler = async (req, res) => {
   const { accountId } = req.params;
@@ -10,14 +13,17 @@ const handler = async (req, res) => {
     firstName,
     username,
     email,
+    password,
     dob
   } = req.body;
 
-  //@todo Password we'll treat differently
+  const hashPass = auth.getHash(password);
+
   const updateObj = {
     firstName,
     username,
     email,
+    password: hashPass,
     dob
   } ;
 

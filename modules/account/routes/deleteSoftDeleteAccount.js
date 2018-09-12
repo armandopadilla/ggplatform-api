@@ -1,3 +1,8 @@
+/**
+ * Delete a specific account
+ *
+ */
+
 // @todo - can only be called by an admin
 // @todo - validation for status
 // @todo - logging to make sure we have an audit trail
