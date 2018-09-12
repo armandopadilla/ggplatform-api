@@ -17,7 +17,7 @@ const handler = async (req, res) => {
 
   try {
     const data = await db.collection('contests').updateOne(
-      { _id: ObjectID(userId) },
+      { _id: ObjectID(contestId) },
       { $pull: { participants: userId }}
     );
 
@@ -32,7 +32,7 @@ const handler = async (req, res) => {
 
 module.exports = fastify => fastify.route({
   method: 'POST',
-  url: '/:contestId',
+  url: '/:contestId/leave',
   handler,
   schema: {
     body: {

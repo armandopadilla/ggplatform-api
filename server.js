@@ -7,7 +7,9 @@ fastify.register(require('fastify-mongodb'), {
   url: 'mongodb://localhost:27017/phoenix'
 });
 
+// Register all endpoints
 fastify.register(require('./modules/account'), { prefix: '/account' });
+fastify.register(require('./modules/contest'), { prefix: '/contest' });
 
 const start = async () => {
   try {
