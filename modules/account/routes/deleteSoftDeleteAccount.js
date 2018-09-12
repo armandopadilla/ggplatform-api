@@ -29,7 +29,7 @@ const handler = async (req, res) => {
       {$set: updateObj}
     );
 
-    if (data.matchedCount) return response.success(updateObj);
+    if (data.matchedCount) return response.success({});
     return response.error();
   } catch(error) {
     console.log(error);
