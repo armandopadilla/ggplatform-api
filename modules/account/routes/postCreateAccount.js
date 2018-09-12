@@ -1,6 +1,9 @@
-// Mongo connection stuff here
+/**
+ * Create a new accout
+ *
+ */
 const Joi = require('joi');
-const { response } = require('../../../utils');
+const { response, auth } = require('../../../utils');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
@@ -13,12 +16,12 @@ const handler = async (req, res) => {
     acceptTerms
   } = req.body;
 
-  //@todo Encrypt the password yo!
+  const hashPass = auth.getHash(password);
   const insertObj = {
     firstName,
     username,
     email,
-    password,
+    password: hashPass,
     dob,
     acceptTerms,
     status: 'active'  // Can be active | inactive (soft delete)

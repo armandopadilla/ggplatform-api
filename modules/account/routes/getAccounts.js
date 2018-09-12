@@ -1,3 +1,7 @@
+/**
+ * Get a list of accounts
+ *
+ */
 const { response } = require('../../../utils');
 
 const handler = async (req, res) => {
