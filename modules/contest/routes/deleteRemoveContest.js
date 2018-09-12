@@ -7,7 +7,7 @@
  * 4. Should there be a reason why this was canceled?  For auditing.
  */
 const Joi = require('joi');
-const ObjectID = required('mongodb').ObjectId;
+const ObjectID = require('mongodb').ObjectId;
 const { response } = require('../../../utils');
 
 const handler = async (req, res) => {

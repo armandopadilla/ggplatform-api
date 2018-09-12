@@ -1,10 +1,10 @@
-const getContest = require('./getContest');
-const getContests = require('./getContests');
-const postCreateContest = require('./postCreateContest');
-const patchUpdateContest = require('./patchUpdateContest');
-const deleteRemoveContest = require('./deleteRemoveContest');
-const postJoin = require('./postJoin');
-const postLeave = require('./postLeave');
+const getContest = require('./routes/getContest');
+const getContests = require('./routes/getContests');
+const postCreateContest = require('./routes/postCreateContest');
+const patchUpdateContest = require('./routes/patchUpdateContest');
+const deleteRemoveContest = require('./routes/deleteRemoveContest');
+const postJoin = require('./routes/postJoin');
+const postLeave = require('./routes/postLeave');
 
 module.exports = (fastify, opt, next) => {
 
