@@ -17,8 +17,8 @@ const handler = (req, res) => {
 };
 
 module.exports = fastify => fastify.route({
-  method: 'DELETE',
-  url: '/',
+  method: 'POST',
+  url: '/logout',
   handler,
   config: {
     cache: fastify.redis

@@ -5,6 +5,7 @@ const error = (error, statusCode) => {
   console.log(error);
 
   if (statusCode === 404) return Boom.notFound(error);
+  if (statusCode === 401) return Boom.unauthorized(error);
   if (statusCode === 400) return Boom.badRequest(error);
   return Boom.badImplementation(error);
 };

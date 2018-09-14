@@ -1,6 +1,8 @@
-const deleteLogout = require('./routes/deleteLogout');
+const postLogout = require('./routes/postLogout');
+const postLogin = require('./routes/postLogin');
 
 module.exports = (fastify, opts, next) => {
-  deleteLogout(fastify);
+  postLogout(fastify);
+  postLogin(fastify);
   next();
-}
+};

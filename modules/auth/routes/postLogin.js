@@ -1,35 +1,60 @@
-// Check if the user is valid
-// Create a JWT
-// Encrypt the JWT body
-// Add the JWT to cache (session store)
-
-
 /**
- * Logout the user out.
- * Remove the JWT from session store
+ * Log In
  */
+// @todo encrypt the body
+
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const Joi = require('joi');
 const { response, auth } = require('../../../utils');
 
+const getTokenInfo = async (user) => {
+  const data = {
+    email: user.email,
+    id: user.id,
+    firstname: user.firstname,
+    username: user.username
+  };
+
+  const microtime = new Date().getTime().toString();
+  const salt = crypto.createHash('md5').update(microtime).digest('hex');
+  const token = jwt.sign(data, salt);
+  const signature = token.split('.')[2];
+
+  return {
+    token,
+    salt,
+    signature
+  }
+};
+
 const handler = async (req, res) => {
   const { cache, db } = res.context.config;
-  const { email, password } = req.params;
+  const { email, password } = req.body;
 
-  const user = await db.collection('users').findOne({ email });
+  const user = await db.collection('accounts').findOne({ email });
 
   if (!user || !auth.isValid(password, user.password)) return response.error('Invalid login', 401);
 
-  const token = getToken(user);
-  cache.setex(token, token);
-  return res.send(token)
+  const tokenInfo = await getTokenInfo(user);
+
+  // Save in session store
+  cache.setex(tokenInfo.token, JSON.stringify(tokenInfo));
+
+  return res.send({
+    token: tokenInfo.token
+  })
 };
 
 module.exports = fastify => fastify.route({
   method: 'POST',
-  url: '/',
+  url: '/login',
   handler,
   schema: {
-
+    body: {
+      email: Joi.string().required(),
+      password: Joi.string().required()
+    }
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
