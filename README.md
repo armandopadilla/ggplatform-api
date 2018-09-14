@@ -64,6 +64,11 @@
 1. Send out notification to users. 
 
 # To Do
+1. Notifications Service
+1. Event Logger
+1. Clean up
+1. Strip integration
+1. Integration tests.
 1. Set up Travis
 1. Set up Infra (AWS Lambda, ec2 with mongos, elastic cache redis, api gateway)
 1. DB - Mongo -> DynamoDB
