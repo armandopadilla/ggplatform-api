@@ -24,7 +24,8 @@ const handler = async (req, res) => {
     pot,
     streamURL,
     status,
-    participants: [] //Initially empty
+    participants: [], //Initially empty
+    entryFee: 0 // Replace with some default
   };
 
   try {
