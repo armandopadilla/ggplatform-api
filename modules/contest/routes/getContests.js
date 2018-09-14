@@ -17,7 +17,7 @@ const handler = async (req, res) => {
   }
 };
 
-module.exports = fastify => fanstify.route({
+module.exports = fastify => fastify.route({
   method: 'GET',
   url: '/list',
   handler,

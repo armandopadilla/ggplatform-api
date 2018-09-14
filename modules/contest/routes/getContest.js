@@ -23,7 +23,7 @@ const handler = async () => {
   }
 };
 
-module.exports = fastify => fanstify.route({
+module.exports = fastify => fastify.route({
   method: 'GET',
   url: '/:contestId',
   handler,
