@@ -1,15 +1,17 @@
-// Create
-  // Create an empty wallet
-  // account_id, balance, currency (US | ETH | etc)
+const getWallets = require('./routes/getWallets');
+const getWallet = require('./routes/getWallet');
 
-// widthraw
-  // Widthraw funds from the wallet
+module.exports = (fastify, opts, next) => {
+  getWallets(fastify);
+  getWallet(fastify);
+  next();
+};
 
-// deposit
-  // Add funds into the wallet
 
-// Fetch
-  // Fetch a specific wallet
-
-// Fetch all
-  // Fetch all the wallets
+/*
+Each user will have a wallet
+A user can deposit funds into the wallet
+A user can witdraw funds from the wallet
+A user can not widthdraw more than they curently have
+A user, for now must all use $(USD)
+ */
