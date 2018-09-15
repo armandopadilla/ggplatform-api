@@ -3,12 +3,10 @@ const sendPush = (text) => {
   // Do the push
 };
 
-const sendEmail = (subject, body, to) => {
-
-}
+const sendEmail = (subject, body, to) => {};
 
 
 module.exports = {
   sendPush,
-  sendEmail
+  sendEmail,
 };

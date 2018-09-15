@@ -36,7 +36,7 @@ const handler = async (req, res) => {
 
     if (data.matchedCount) return response.success(updateObj);
     return response.error();
-  } catch(error) {
+  } catch (error) {
     return response.error(error);
   }
 };
@@ -57,6 +57,6 @@ module.exports = fastify => fastify.route({
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db // This seems off.
-  }
+    db: fastify.mongo.db, // This seems off.
+  },
 });

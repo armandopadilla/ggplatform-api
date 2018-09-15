@@ -10,7 +10,7 @@
 const Joi = require('joi');
 const ObjectID = require('mongodb').ObjectId;
 const { response } = require('../../../utils');
-const { db:collection } = require('../../../config');
+const { db: collection } = require('../../../config');
 const withdraw = require('../../wallet/events/withdraw');
 
 const handler = async (req, res) => {
@@ -27,19 +27,17 @@ const handler = async (req, res) => {
     if (wallet.balance >= contest.entryFee) {
       const data = await db.collection(collection.CONTEST_NAME).updateOne(
         { _id: ObjectID(contestId) },
-        { $addToSet: { participants: userId }}
+        { $addToSet: { participants: userId } },
       );
 
       if (data.matchedCount) {
         await withdraw(userId, contest.entryFee, db);
-        return response.success(insertObj);
+        return response.success({});
       }
-    }
-    // If no, send an error.
-    else {
+    } else {
       return response.error('Not enough funds', 400);
     }
-  } catch(error) {
+  } catch (error) {
     return response.error(error);
   }
 };
@@ -51,11 +49,11 @@ module.exports = fastify => fastify.route({
   handler,
   schema: {
     body: {
-      userId: Joi.string().required()
-    }
+      userId: Joi.string().required(),
+    },
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db
-  }
+    db: fastify.mongo.db,
+  },
 });

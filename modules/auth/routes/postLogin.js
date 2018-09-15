@@ -26,7 +26,7 @@ const getTokenInfo = async (user) => {
     token,
     salt,
     signature,
-  }
+  };
 };
 
 const handler = async (req, res) => {
@@ -43,7 +43,7 @@ const handler = async (req, res) => {
   cache.setex(tokenInfo.token, JSON.stringify(tokenInfo));
 
   return res.send({
-    token: tokenInfo.token
+    token: tokenInfo.token,
   });
 };
 
@@ -60,6 +60,6 @@ module.exports = fastify => fastify.route({
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db,
-    cache: fastify.redis
+    cache: fastify.redis,
   },
 });

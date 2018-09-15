@@ -48,6 +48,6 @@ module.exports = fastify => fastify.route({
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db // This seems off.
+    db: fastify.mongo.db, // This seems off.
   },
 });

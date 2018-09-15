@@ -5,7 +5,7 @@
  */
 const Joi = require('joi');
 const { response } = require('../../../utils');
-const { db:collection } = require('../../../config');
+const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
@@ -25,8 +25,8 @@ const handler = async (req, res) => {
     pot,
     streamURL,
     status,
-    participants: [], //Initially empty
-    entryFee: 0 // Replace with some default
+    participants: [], // Initially empty
+    entryFee: 0, // Replace with some default
   };
 
   try {
@@ -34,7 +34,7 @@ const handler = async (req, res) => {
 
     if (data.insertedCount) return response.success(insertObj);
     return response.error();
-  } catch(error) {
+  } catch (error) {
     return response.error(error);
   }
 };
@@ -51,11 +51,11 @@ module.exports = fastify => fastify.route({
       endDateTime: Joi.string().required(),
       pot: Joi.number(),
       streamURL: Joi.string().required(),
-      status: Joi.string().required()
-    }
+      status: Joi.string().required(),
+    },
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db // This seems off.
-  }
+    db: fastify.mongo.db, // This seems off.
+  },
 });

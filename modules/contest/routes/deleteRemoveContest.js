@@ -18,7 +18,7 @@ const handler = async (req, res) => {
   try {
     const data = await db.collection(collection.CONTEST_NAME).updateOne(
       { _id: ObjectID(contestId) },
-      {$set: { status: 'canceled' }},
+      { $set: { status: 'canceled' } },
     );
 
     if (data.matchedCount) return response.success({});

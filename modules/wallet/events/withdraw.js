@@ -16,7 +16,7 @@ const withdraw = async (accountId, amount, db) => {
   if (!amount) throw new Error('amount must be a value greater than 0.00');
 
   const wallet = await db.collection(collection.WALLET_NAME).findOne({
-    ownerId: ObjectID(accountId);
+    ownerId: ObjectID(accountId),
   });
 
   if (!wallet) throw new Error('This account has no wallet');
@@ -25,15 +25,14 @@ const withdraw = async (accountId, amount, db) => {
   if (wallet.balance < amount) throw new Error('Not enough funds.');
 
   // Withdraw!
-  const newBalance = parseFloat(balance - amount);
+  const newBalance = parseFloat(wallet.balance - amount);
   const updatedWallet = await db.collection(collection.WALLET_NAME).update(
     { _id: wallet.id },
-    { $set: { balance: newBalance } }
+    { $set: { balance: newBalance } },
   );
 
   if (updatedWallet.matchedCount) return wallet;
   return {}; // @todo not sure this is the right return.
-
 };
 
 module.exports = withdraw;

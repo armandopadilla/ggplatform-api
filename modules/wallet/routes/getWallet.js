@@ -17,7 +17,7 @@ const handler = async (req, res) => {
   });
 
   if (wallet) return wallet;
-  return {}
+  return {};
 };
 
 

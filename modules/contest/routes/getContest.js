@@ -16,7 +16,7 @@ const handler = async (req, res) => {
   try {
     const contest = await db.collection(collection.CONTEST_NAME)
       .findOne(
-        { _id: ObjectID(contestId) }
+        { _id: ObjectID(contestId) },
       );
 
     if (contest) return response.success(contest);

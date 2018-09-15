@@ -27,7 +27,7 @@ const handler = async (req, res) => {
     password: hashPass,
     dob,
     acceptTerms,
-    status: 'active',  // Can be active | inactive (soft delete)
+    status: 'active', // Can be active | inactive (soft delete)
     isAdmin: false,
     createdDate: new Date(),
     updateDate: new Date(),

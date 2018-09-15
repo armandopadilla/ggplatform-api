@@ -3,8 +3,8 @@
  *
  */
 const Joi = require('joi');
-const { ObjectID } = require('mongodb')
-const { response, auth } = require('../../../utils');
+const { ObjectID } = require('mongodb');
+const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
@@ -22,13 +22,13 @@ const handler = async (req, res) => {
     username,
     email,
     dob,
-  } ;
+  };
 
   try {
     const data = await db.collection(collection.ACCOUNT_NAME)
       .updateOne(
         { id: ObjectID(accountId) },
-        {$set: updateObj}
+        { $set: updateObj },
       );
 
     if (data.matchedCount) return response.success(updateObj);
@@ -56,6 +56,6 @@ module.exports = fastify => fastify.route({
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db // This seems off.
+    db: fastify.mongo.db, // This seems off.
   },
 });

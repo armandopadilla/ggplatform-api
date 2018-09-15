@@ -11,7 +11,6 @@ const postJoin = require('./routes/postJoin');
 const postLeave = require('./routes/postLeave');
 
 module.exports = (fastify, opt, next) => {
-
   // GET - /contest/:contestId
   getContest(fastify);
 
@@ -41,6 +40,8 @@ module.exports = (fastify, opt, next) => {
  User fetches all contests that have not completed
 
  As a System, let me update each contest
- As a System, let me grab all the 'end' state contests and dispurse pot. Place the contest in 'pot_dispursement_in_progress'
- As a System, let me grab all 'pot_dispursement_in_progress_completed' to 'completed
+ As a System, let me grab all the 'end' state contests and dispurse pot.
+ Place the contest in 'pot_dispursement_in_progress'
+ As a System, let me grab all 'pot_dispursement_in_progress_completed'
+ to 'completed
 */
