@@ -1,6 +1,8 @@
 /**
  * Fetch a specific contest
  *
+ * Has basic info on the contest and participant count.
+ * @todo  do we need a list of users in the contest?  I would think not?
  */
 const Joi = require('joi');
 const ObjectId = require('mongodb').ObjectID;

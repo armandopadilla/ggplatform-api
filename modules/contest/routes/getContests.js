@@ -1,6 +1,7 @@
 /**
  * Fetch a list of contests
  *
+ * Has basic info on the contest and participant count.
  */
 const { response } = require('../../../utils');
 const { db:collection } = require('../../../config');

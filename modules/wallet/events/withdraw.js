@@ -11,8 +11,7 @@ const { db:collection } = require('../../../config');
  * @param amount
  * @param fastify
  */
-const withdraw = async (accountId, amount, fastify) => {
-  const { db } = fastify.mongo.db;
+const withdraw = async (accountId, amount, db) => {
   if (!accountId) throw new Error('accountId can not be empty');
   if (!amount) throw new Error('amount must be a value greater than 0.00');
 
