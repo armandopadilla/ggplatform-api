@@ -1,12 +1,13 @@
 /**
  * Log In
+ *
+ * @todo encrypt the body
  */
-// @todo encrypt the body
-
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const Joi = require('joi');
 const { response, auth } = require('../../../utils');
+const { db:collection } = require('../../../config');
 
 const getTokenInfo = async (user) => {
   const data = {
@@ -32,7 +33,7 @@ const handler = async (req, res) => {
   const { cache, db } = res.context.config;
   const { email, password } = req.body;
 
-  const user = await db.collection('accounts').findOne({ email });
+  const user = await db.collection(collection.ACCOUNT_NAME).findOne({ email });
 
   if (!user || !auth.isValid(password, user.password)) return response.error('Invalid login', 401);
 

@@ -1,4 +1,5 @@
 const ObjectID = require('mongodb').ObjectID;
+const { db:collection } = require('../../../config');
 
 /**
  * Withdraw funds from a wallet. This is also part of other transactions.
@@ -15,7 +16,7 @@ const withdraw = async (accountId, amount, fastify) => {
   if (!accountId) throw new Error('accountId can not be empty');
   if (!amount) throw new Error('amount must be a value greater than 0.00');
 
-  const wallet = await db.collection('wallets').findOne({
+  const wallet = await db.collection(collection.WALLET_NAME).findOne({
     ownerId: accountId
   });
 
@@ -26,7 +27,7 @@ const withdraw = async (accountId, amount, fastify) => {
 
   // Withdraw!
   const newBalance = parseFloat(balance - amount);
-  const updatedWallet = await db.collection('wallets').update(
+  const updatedWallet = await db.collection(collection.WALLET_NAME).update(
     { _id: wallet.id },
     { $set: { balance: newBalance } }
   );

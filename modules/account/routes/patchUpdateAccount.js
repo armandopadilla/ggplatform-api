@@ -5,6 +5,7 @@
 const Joi = require('joi');
 const ObjectID = require('mongodb').ObjectID;
 const { response, auth } = require('../../../utils');
+const { db:collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { accountId } = req.params;
@@ -13,30 +14,26 @@ const handler = async (req, res) => {
     firstName,
     username,
     email,
-    password,
     dob
   } = req.body;
-
-  const hashPass = auth.getHash(password);
 
   const updateObj = {
     firstName,
     username,
     email,
-    password: hashPass,
     dob
   } ;
 
   try {
-    const data = await db.collection('accounts').updateOne(
-      { id: ObjectID(accountId) },
-      {$set: updateObj}
-    );
+    const data = await db.collection(collection.ACCOUNT_NAME)
+      .updateOne(
+        { id: ObjectID(accountId) },
+        {$set: updateObj}
+      );
 
     if (data.matchedCount) return response.success(updateObj);
     return response.error();
   } catch(error) {
-    console.log(error);
     return response.error(error);
   }
 };

@@ -1,4 +1,5 @@
 const ObjectID = require('mongodb').ObjectID;
+const { db:collection } = require('../../../config');
 
 /**
  * Deposit funds into a wallet. Will not open to public.
@@ -14,13 +15,12 @@ const deposit = async (accountId, amount, fastify) => {
   if (!amount) throw new Error('amount must be a value greater than 0.00');
 
   const newBalance = parseFloat(balance + amount);
-  const updatedWallet = await db.collection('wallets').update(
+  const updatedWallet = await db.collection(collection.WALLET_NAME).update(
     { ownerId: accountId },
     { $set: { balance: newBalance } }
   );
 
-  if (updatedWallet.matchedCount) return true;
-  return false // @todo not sure this is the right return.
+  return (updatedWallet.matchedCount);
 };
 
 module.exports = deposit;
