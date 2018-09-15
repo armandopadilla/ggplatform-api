@@ -1,14 +1,14 @@
-const push = (text) => {
+const sendPush = (text) => {
   // Grab the text
   // Do the push
 };
 
-const email = (subject, body, to) => {
+const sendEmail = (subject, body, to) => {
 
 }
 
 
 module.exports = {
-  push,
-  email
+  sendPush,
+  sendEmail
 };

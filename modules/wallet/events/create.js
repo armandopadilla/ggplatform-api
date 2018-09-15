@@ -7,8 +7,7 @@ const { db:collection } = require('../../../config');
  *
  * @param accountId
  */
-const create = async (accountId, fastify) => {
-  const { db } = fastify.mongo.db;
+const create = async (accountId, db) => {
   if (!accountId) throw new Error('accountId can not be empty');
 
   const walletInfo = {
