@@ -5,6 +5,8 @@
 const Joi = require('joi');
 const { response, auth } = require('../../../utils');
 const { db:collection } = require('../../../config');
+const createWallet = require('../../wallet/events/create');
+const { sendWelcomeEmail } = require('../../../helpers/email');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
@@ -18,7 +20,7 @@ const handler = async (req, res) => {
   } = req.body;
 
   const hashPass = auth.getHash(password);
-  const insertObj = {
+  const accountObj = {
     firstName,
     username,
     email,
@@ -32,10 +34,22 @@ const handler = async (req, res) => {
   } ;
 
   try {
-    const data = await db.collection(collection.ACCOUNT_NAME)
-      .insertOne(insertObj);
+    // Create account
+    const account = await db.collection(collection.ACCOUNT_NAME).insertOne(accountObj);
 
-    if (data.insertedCount) return response.success(insertObj);
+    // Create wallet - Could be a async call
+    const wallet = await createWallet(accountObj.id, db);
+
+    // Send out welcome email - Could be async call
+    await sendWelcomeEmail(account);
+
+    // Compose the response
+    const data = {
+      account,
+      wallet
+    };
+
+    if (data.insertedCount) return response.success(data);
     return response.error();
   } catch(error) {
     return response.error(error);
