@@ -5,26 +5,26 @@
 const Joi = require('joi');
 const ObjectID = require('mongodb').ObjectId;
 const { response } = require('../../../utils');
-const { db:collection } = require('../../../config');
+const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
   const { userId } = req.body;
   const { contestId } = req.params;
 
-  //@todo Full refund?
-  //@todo Email to confirm...as a receipt of sorts?
-  //@todo update the pot
+  // @todo Full refund?
+  // @todo Email to confirm...as a receipt of sorts?
+  // @todo update the pot
 
   try {
     const data = await db.collection(collection.CONTEST_NAME).updateOne(
       { _id: ObjectID(contestId) },
-      { $pull: { participants: userId }}
+      { $pull: { participants: userId } },
     );
 
-    if (data.matchedCount) return response.success(insertObj);
+    if (data.matchedCount) return response.success({});
     return response.error();
-  } catch(error) {
+  } catch (error) {
     return response.error(error);
   }
 };
@@ -36,11 +36,11 @@ module.exports = fastify => fastify.route({
   handler,
   schema: {
     body: {
-      userId: Joi.string().required()
-    }
+      userId: Joi.string().required(),
+    },
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db
-  }
+    db: fastify.mongo.db,
+  },
 });

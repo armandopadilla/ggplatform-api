@@ -7,14 +7,14 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const Joi = require('joi');
 const { response, auth } = require('../../../utils');
-const { db:collection } = require('../../../config');
+const { db: collection } = require('../../../config');
 
 const getTokenInfo = async (user) => {
   const data = {
     email: user.email,
     id: user.id,
     firstname: user.firstname,
-    username: user.username
+    username: user.username,
   };
 
   const microtime = new Date().getTime().toString();
@@ -25,8 +25,8 @@ const getTokenInfo = async (user) => {
   return {
     token,
     salt,
-    signature
-  }
+    signature,
+  };
 };
 
 const handler = async (req, res) => {
@@ -43,8 +43,8 @@ const handler = async (req, res) => {
   cache.setex(tokenInfo.token, JSON.stringify(tokenInfo));
 
   return res.send({
-    token: tokenInfo.token
-  })
+    token: tokenInfo.token,
+  });
 };
 
 module.exports = fastify => fastify.route({
@@ -54,12 +54,12 @@ module.exports = fastify => fastify.route({
   schema: {
     body: {
       email: Joi.string().required(),
-      password: Joi.string().required()
-    }
+      password: Joi.string().required(),
+    },
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db,
-    cache: fastify.redis
-  }
+    cache: fastify.redis,
+  },
 });

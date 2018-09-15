@@ -7,9 +7,9 @@
  * 4. Should there be a reason why this was canceled?  For auditing.
  */
 const Joi = require('joi');
-const ObjectID = require('mongodb').ObjectId;
+const { ObjectID } = require('mongodb');
 const { response } = require('../../../utils');
-const { db:collection } = require('../../../config');
+const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { contestId } = req.params;
@@ -18,12 +18,12 @@ const handler = async (req, res) => {
   try {
     const data = await db.collection(collection.CONTEST_NAME).updateOne(
       { _id: ObjectID(contestId) },
-      {$set: { status: 'canceled' }}
+      { $set: { status: 'canceled' } },
     );
 
     if (data.matchedCount) return response.success({});
     return response.error();
-  } catch(error) {
+  } catch (error) {
     return response.error(error);
   }
 };
@@ -35,11 +35,11 @@ module.exports = fastify => fastify.route({
   handler,
   schema: {
     params: {
-      contestId: Joi.string().required()
-    }
+      contestId: Joi.string().required(),
+    },
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db // This seems off.
-  }
+    db: fastify.mongo.db, // This seems off.
+  },
 });

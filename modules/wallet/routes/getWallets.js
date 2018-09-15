@@ -4,7 +4,7 @@
  * @param accountId
  * @param fastify
  */
-const { db:collection } = require('../../../config');
+const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
@@ -18,6 +18,6 @@ module.exports = fastify => fastify.route({
   url: '/list',
   handler,
   config: {
-    db: fastify.mongo.db
-  }
+    db: fastify.mongo.db,
+  },
 });

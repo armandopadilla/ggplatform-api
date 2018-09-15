@@ -5,11 +5,11 @@ fastify.register(require('fastify-boom'));
 fastify.register(require('fastify-mongodb'), {
   forceClose: true,
   url: 'mongodb://localhost:27017/phoenix',
-  useNewUrlParser: true
+  useNewUrlParser: true,
 });
 
 fastify.register(require('fastify-redis'), {
-  host: '127.0.0.1'
+  host: '127.0.0.1',
 });
 
 
@@ -27,7 +27,6 @@ const start = async () => {
     fastify.log.error(err);
     process.exit(1);
   }
-}
-
+};
 
 start();

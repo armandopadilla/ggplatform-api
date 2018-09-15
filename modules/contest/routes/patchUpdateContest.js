@@ -3,9 +3,9 @@
  *
  */
 const Joi = require('joi');
-const ObjectID = require('mongodb').ObjectId;
+const { ObjectID } = require('mongodb');
 const { response } = require('../../../utils');
-const { db:collection } = require('../../../config');
+const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { contestId } = req.params;
@@ -16,7 +16,7 @@ const handler = async (req, res) => {
     endDateTime,
     pot,
     streamURL,
-    status
+    status,
   } = req.body;
 
   const updateObj = {
@@ -25,18 +25,18 @@ const handler = async (req, res) => {
     endDateTime,
     pot,
     streamURL,
-    status
+    status,
   };
 
   try {
     const data = await db.collection(collection.CONTEST_NAME).updateOne(
       { id: ObjectID(contestId) },
-      { $set: updateObj }
+      { $set: updateObj },
     );
 
-    if (data.matchedCount) return response.success(insertObj);
+    if (data.matchedCount) return response.success(updateObj);
     return response.error();
-  } catch(error) {
+  } catch (error) {
     return response.error(error);
   }
 };
@@ -52,11 +52,11 @@ module.exports = fastify => fastify.route({
       startDateTime: Joi.string().required(),
       endDateTime: Joi.string().required(),
       pot: Joi.number(),
-      streamURL: Joi.string().required()
-    }
+      streamURL: Joi.string().required(),
+    },
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db // This seems off.
-  }
+    db: fastify.mongo.db, // This seems off.
+  },
 });

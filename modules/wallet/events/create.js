@@ -1,5 +1,5 @@
-const ObjectID = require('mongodb').ObjectID;
-const { db:collection } = require('../../../config');
+const { ObjectID } = require('mongodb');
+const { db: collection } = require('../../../config');
 
 /**
  * Create a wallet.  For now this happens as part of another transactions
@@ -15,13 +15,13 @@ const create = async (accountId, db) => {
     balance: 0.00,
     currency: 'USD',
     createdDate: new Date(),
-    updateDate: new Date()
+    updateDate: new Date(),
   };
 
   try {
-    const contest = await db.collection(collection.WALLET_NAME).insetOne(walletInfo);
+    await db.collection(collection.WALLET_NAME).insertOne(walletInfo);
     return walletInfo;
-  } catch(error) {
+  } catch (error) {
     throw Error(error);
   }
 

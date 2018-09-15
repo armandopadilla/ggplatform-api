@@ -2,7 +2,6 @@
  * Logout the user out.
  * Remove the JWT from session store
  */
-const { response } = require('../../../utils');
 
 const handler = (req, res) => {
   const { cache } = res.context.config;
@@ -13,7 +12,7 @@ const handler = (req, res) => {
   if (!token) return res.send({});
 
   cache.del(token);
-  return res.send({})
+  return res.send({});
 };
 
 module.exports = fastify => fastify.route({
@@ -21,6 +20,6 @@ module.exports = fastify => fastify.route({
   url: '/logout',
   handler,
   config: {
-    cache: fastify.redis
-  }
+    cache: fastify.redis,
+  },
 });

@@ -1,22 +1,18 @@
 const Boom = require('boom');
 
-const error = (error, statusCode) => {
-  //Log things here.
-  fastify.log.error(error);
+const error = (errorMessage, statusCode) => {
+  // Log things here.
+  fastify.log.error(errorMessage);
 
-  if (statusCode === 404) return Boom.notFound(error);
-  if (statusCode === 401) return Boom.unauthorized(error);
-  if (statusCode === 400) return Boom.badRequest(error);
-  return Boom.badImplementation(error);
+  if (statusCode === 404) return Boom.notFound(errorMessage);
+  if (statusCode === 401) return Boom.unauthorized(errorMessage);
+  if (statusCode === 400) return Boom.badRequest(errorMessage);
+  return Boom.badImplementation(errorMessage);
 };
 
-const success = (data) => {
-  return {
-    data
-  }
-};
+const success = (data) => ({ data, });
 
 module.exports = {
   error,
-  success
+  success,
 };
