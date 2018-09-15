@@ -8,27 +8,27 @@
  */
 
 const Joi = require('joi');
-const ObjectID = require('mongodb').ObjectID;
+const { ObjectID } = require('mongodb');
 const { response } = require('../../../utils');
-const { db:collection } = require('../../../config');
+const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { accountId } = req.params;
   const { db } = res.context.config;
   const {
-    status
+    status,
   } = req.body;
 
   try {
     const data = await db.collection(collection.ACCOUNT_NAME)
       .updateOne(
         { id: ObjectID(accountId) },
-        {$set: { status }}
+        { $set: { status } },
       );
 
     if (data.matchedCount) return response.success({});
     return response.error();
-  } catch(error) {
+  } catch (error) {
     return response.error(error);
   }
 };
@@ -40,14 +40,14 @@ module.exports = fastify => fastify.route({
   handler,
   schema: {
     params: {
-      accountId: Joi.string().required()
+      accountId: Joi.string().required(),
     },
     body: {
-      status: Joi.string().required()
-    }
+      status: Joi.string().required(),
+    },
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db // This seems off.
-  }
+  },
 });

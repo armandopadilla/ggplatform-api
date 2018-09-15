@@ -6,7 +6,7 @@
 const Joi = require('joi');
 const ObjectId = require('mongodb').ObjectID;
 const { response } = require('../../../utils');
-const { db:collection, errors } = require('../../../config');
+const { db: collection, errors } = require('../../../config');
 
 const handler = async (req, res) => {
   const { accountId } = req.params;
@@ -18,7 +18,7 @@ const handler = async (req, res) => {
 
     if (account) return response.success(account);
     return response.error(errors.ACCOUNT_NOT_FOUND, 404);
-  } catch(error) {
+  } catch (error) {
     return response.error(error);
   }
 };
@@ -30,11 +30,11 @@ module.exports = fastify => fastify.route({
   handler,
   schema: {
     params: {
-      accountId: Joi.string().required()
-    }
+      accountId: Joi.string().required(),
+    },
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db // This seems off.
-  }
+    db: fastify.mongo.db, // This seems off.
+  },
 });

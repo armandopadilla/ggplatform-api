@@ -4,7 +4,7 @@
  * Has basic info on the contest and participant count.
  */
 const { response } = require('../../../utils');
-const { db:collection } = require('../../../config');
+const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
@@ -14,7 +14,7 @@ const handler = async (req, res) => {
       .find({});
 
     return response.success(contests || []);
-  } catch(error) {
+  } catch (error) {
     return response.error(error);
   }
 };
@@ -24,6 +24,6 @@ module.exports = fastify => fastify.route({
   url: '/list',
   handler,
   config: {
-    db: fastify.mongo.db
-  }
+    db: fastify.mongo.db,
+  },
 });

@@ -4,7 +4,7 @@
  */
 const Joi = require('joi');
 const { response, auth } = require('../../../utils');
-const { db:collection } = require('../../../config');
+const { db: collection } = require('../../../config');
 const createWallet = require('../../wallet/events/create');
 const { sendWelcomeEmail } = require('../../../helpers/email');
 
@@ -30,8 +30,8 @@ const handler = async (req, res) => {
     status: 'active',  // Can be active | inactive (soft delete)
     isAdmin: false,
     createdDate: new Date(),
-    updateDate: new Date()
-  } ;
+    updateDate: new Date(),
+  };
 
   try {
     // Create account
@@ -46,12 +46,12 @@ const handler = async (req, res) => {
     // Compose the response
     const data = {
       account,
-      wallet
+      wallet,
     };
 
     if (data.insertedCount) return response.success(data);
     return response.error();
-  } catch(error) {
+  } catch (error) {
     return response.error(error);
   }
 };
@@ -68,11 +68,11 @@ module.exports = fastify => fastify.route({
       email: Joi.string().email(),
       password: Joi.string().required(),
       dob: Joi.string().required(),
-      acceptTerms: Joi.string().required()
-    }
+      acceptTerms: Joi.string().required(),
+    },
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db // This seems off.
-  }
+    db: fastify.mongo.db, // This seems off.
+  },
 });

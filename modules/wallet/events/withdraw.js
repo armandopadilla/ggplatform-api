@@ -1,5 +1,5 @@
-const ObjectID = require('mongodb').ObjectID;
-const { db:collection } = require('../../../config');
+const { ObjectID } = require('mongodb');
+const { db: collection } = require('../../../config');
 
 /**
  * Withdraw funds from a wallet. This is also part of other transactions.
@@ -16,7 +16,7 @@ const withdraw = async (accountId, amount, db) => {
   if (!amount) throw new Error('amount must be a value greater than 0.00');
 
   const wallet = await db.collection(collection.WALLET_NAME).findOne({
-    ownerId: accountId
+    ownerId: ObjectID(accountId);
   });
 
   if (!wallet) throw new Error('This account has no wallet');

@@ -5,14 +5,15 @@
  * @param fastify
  */
 const Joi = require('joi');
-const { db:collection } = require('../../../config');
+const ObjectID = require('mongodb').ObjectId;
+const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
   const { walletId } = req.params;
 
   const wallet = await db.collection(collection.WALLET_NAME).findOne({
-    _id: ObjectID(walletId)
+    _id: ObjectID(walletId),
   });
 
   if (wallet) return wallet;
@@ -26,11 +27,11 @@ module.exports = fastify => fastify.route({
   handler,
   schema: {
     params: {
-      walletId: Joi.string().required()
-    }
+      walletId: Joi.string().required(),
+    },
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
-    db: fastify.mongo.db
-  }
+    db: fastify.mongo.db,
+  },
 });
