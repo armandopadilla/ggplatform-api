@@ -1,4 +1,4 @@
-const { sendEmail } = require('../notifications');
+const { sendEmail } = require('../modules/notifications');
 
 /**
  * Send out the welcome email.
