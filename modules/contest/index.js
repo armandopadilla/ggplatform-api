@@ -1,3 +1,7 @@
+/**
+ * Contest functionality
+ *
+ */
 const getContest = require('./routes/getContest');
 const getContests = require('./routes/getContests');
 const postCreateContest = require('./routes/postCreateContest');
@@ -31,3 +35,12 @@ module.exports = (fastify, opt, next) => {
 
   next();
 };
+
+/**
+ Let me see all the available contests I can place a waiger on.
+ User fetches all contests that have not completed
+
+ As a System, let me update each contest
+ As a System, let me grab all the 'end' state contests and dispurse pot. Place the contest in 'pot_dispursement_in_progress'
+ As a System, let me grab all 'pot_dispursement_in_progress_completed' to 'completed
+*/

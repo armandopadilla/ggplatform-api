@@ -3,16 +3,17 @@
  *
  */
 const { response } = require('../../../utils');
+const { db:collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
 
   try {
-    const contests = await db.collection('contests').find({});
+    const contests = await db.collection(collection.CONTEST_NAME)
+      .find({});
 
     return response.success(contests || []);
   } catch(error) {
-    console.log(error);
     return response.error(error);
   }
 };

@@ -5,20 +5,21 @@
 const Joi = require('joi');
 const ObjectId = require('mongodb').ObjectID;
 const { response } = require('../../../utils');
+const { db:collection, errors } = require('../../../config');
 
-const handler = async () => {
+const handler = async (req, res) => {
   const { contestId } = req.params;
   const { db } = res.context.config;
 
   try {
-    const contest = await db.collection('contests').findOne({ _id: ObjectId(contestId) });
-    // Fetch the participants
-    // Fetch other stuff here
+    const contest = await db.collection(collection.CONTEST_NAME)
+      .findOne(
+        { _id: ObjectId(contestId) }
+      );
 
     if (contest) return response.success(contest);
-    return response.error('Contest not found', 404);
+    return response.error(errors.CONTEST_NOT_FOUND, 404);
   } catch(error) {
-    console.log(error);
     return response.error(error);
   }
 };

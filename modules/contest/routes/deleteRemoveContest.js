@@ -9,14 +9,14 @@
 const Joi = require('joi');
 const ObjectID = require('mongodb').ObjectId;
 const { response } = require('../../../utils');
+const { db:collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { contestId } = req.params;
   const { db } = res.context.config;
 
-
   try {
-    const data = await db.collection('contests').updateOne(
+    const data = await db.collection(collection.CONTEST_NAME).updateOne(
       { _id: ObjectID(contestId) },
       {$set: { status: 'canceled' }}
     );
@@ -24,7 +24,6 @@ const handler = async (req, res) => {
     if (data.matchedCount) return response.success({});
     return response.error();
   } catch(error) {
-    console.log(error);
     return response.error(error);
   }
 };

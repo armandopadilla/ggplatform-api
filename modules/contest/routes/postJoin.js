@@ -5,6 +5,7 @@
 const Joi = require('joi');
 const ObjectID = require('mongodb').ObjectId;
 const { response } = require('../../../utils');
+const { db:collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
@@ -16,7 +17,7 @@ const handler = async (req, res) => {
   //@todo DO something here im sure.
 
   try {
-    const data = await db.collection('contests').updateOne(
+    const data = await db.collection(collection.CONTEST_NAME).updateOne(
       { _id: ObjectID(contestId) },
       { $addToSet: { participants: userId }}
     );
@@ -24,7 +25,6 @@ const handler = async (req, res) => {
     if (data.matchedCount) return response.success(insertObj);
     return response.error();
   } catch(error) {
-    console.log(error);
     return response.error(error);
   }
 };

@@ -4,6 +4,7 @@
  */
 const Joi = require('joi');
 const { response, auth } = require('../../../utils');
+const { db:collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
@@ -13,7 +14,7 @@ const handler = async (req, res) => {
     email,
     password,
     dob,
-    acceptTerms
+    acceptTerms,
   } = req.body;
 
   const hashPass = auth.getHash(password);
@@ -24,16 +25,19 @@ const handler = async (req, res) => {
     password: hashPass,
     dob,
     acceptTerms,
-    status: 'active'  // Can be active | inactive (soft delete)
+    status: 'active',  // Can be active | inactive (soft delete)
+    isAdmin: false,
+    createdDate: new Date(),
+    updateDate: new Date()
   } ;
 
   try {
-    const data = await db.collection('accounts').insertOne(insertObj);
+    const data = await db.collection(collection.ACCOUNT_NAME)
+      .insertOne(insertObj);
 
     if (data.insertedCount) return response.success(insertObj);
     return response.error();
   } catch(error) {
-    console.log(error);
     return response.error(error);
   }
 };

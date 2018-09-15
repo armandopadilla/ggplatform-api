@@ -2,7 +2,7 @@ const Boom = require('boom');
 
 const error = (error, statusCode) => {
   //Log things here.
-  console.log(error);
+  fastify.log.error(error);
 
   if (statusCode === 404) return Boom.notFound(error);
   if (statusCode === 401) return Boom.unauthorized(error);

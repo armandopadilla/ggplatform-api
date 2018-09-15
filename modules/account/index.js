@@ -18,3 +18,15 @@ module.exports = (fastify, options, next) => {
 
   next();
 };
+
+
+/**
+ 1. Create account
+  User Signs up
+  System creates an account for the user
+  System create a wallet for the user.
+
+  User must pay initial $20 for wallet
+  System goes through first deposit
+  System sends a welcome email.
+*/

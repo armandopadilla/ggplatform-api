@@ -1,15 +1,16 @@
 /**
  * Delete a specific account
  *
+ * @todo - can only be called by an admin
+ * @todo - validation for status
+ * @todo - logging to make sure we have an audit trail
+ * @todo - What happens to the wallet and its funds?
  */
-
-// @todo - can only be called by an admin
-// @todo - validation for status
-// @todo - logging to make sure we have an audit trail
 
 const Joi = require('joi');
 const ObjectID = require('mongodb').ObjectID;
 const { response } = require('../../../utils');
+const { db:collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { accountId } = req.params;
@@ -18,21 +19,16 @@ const handler = async (req, res) => {
     status
   } = req.body;
 
-  //@todo Password we'll treat differently
-  const updateObj = {
-    status
-  } ;
-
   try {
-    const data = await db.collection('accounts').updateOne(
-      { id: ObjectID(accountId) },
-      {$set: updateObj}
-    );
+    const data = await db.collection(collection.ACCOUNT_NAME)
+      .updateOne(
+        { id: ObjectID(accountId) },
+        {$set: { status }}
+      );
 
     if (data.matchedCount) return response.success({});
     return response.error();
   } catch(error) {
-    console.log(error);
     return response.error(error);
   }
 };
@@ -47,10 +43,7 @@ module.exports = fastify => fastify.route({
       accountId: Joi.string().required()
     },
     body: {
-      firstName: Joi.string().required(),
-      username: Joi.string().required(),
-      email: Joi.string().email(),
-      dob: Joi.string().required()
+      status: Joi.string().required()
     }
   },
   schemaCompiler: schema => data => Joi.validate(data, schema),

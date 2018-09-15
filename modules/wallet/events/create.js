@@ -1,4 +1,5 @@
 const ObjectID = require('mongodb').ObjectID;
+const { db:collection } = require('../../../config');
 
 /**
  * Create a wallet.  For now this happens as part of another transactions
@@ -19,7 +20,7 @@ const create = async (accountId, fastify) => {
   };
 
   try {
-    const contest = await db.collection('wallets').insetOne(walletInfo);
+    const contest = await db.collection(collection.WALLET_NAME).insetOne(walletInfo);
     return walletInfo;
   } catch(error) {
     throw Error(error);

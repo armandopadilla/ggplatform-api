@@ -1,7 +1,10 @@
 /**
  * Grab the event and store it.
  */
+const { db:collection } = require('../../../config');
+
 const validProperties = ['eventType', 'accountId', 'dateTime', 'description'];
+
 const logEvent = async (payload, fastify) => {
   const { db } = fastify.mongo.db;
 
@@ -10,7 +13,7 @@ const logEvent = async (payload, fastify) => {
     if (!validProperties.indexOf(key)) return false;
   });
 
-  const insert = await db.collection('event_logs').insertOne(payload);
+  const insert = await db.collection(collection.EVENTLOGGER__NAME).insertOne(payload);
   return payload;
 };
 
