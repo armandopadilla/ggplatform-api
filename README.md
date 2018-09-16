@@ -20,8 +20,7 @@
 1. Other…
 
 # Notification
-1. POST - /notification/email/EMAIL_NOTIFICATION_ID
-1. POST - /notification/push/PUSH_NOTIFICATION_ID
+Will not be triggered by a API call
 
 # Event Logger
 1. POST - /event - Save an event
@@ -33,6 +32,9 @@
 1. GET - /contest/:contestId - Get specific contest
 1. GET - /contest/:type/list - Get all the contests in the system for a specific type.
 1. PATCH - /contest/:contestId - Update specific contest
+
+# CI
+https://travis-ci.org/Wiredpanda/phoenix-apis
 
 # Schedule Hooks
 1. Every 5 minutes run and lock contests within X minutes from ending.
@@ -47,28 +49,14 @@
 1. ACLs
 
 # General Flow
-## Registration
-1. Create account + Create Wallet + Email + Hook up with Strype
-## Login 
-1. Account
-## Contests
-1. Contests List
-## Contest
-1. Contest
-## Betting
-1. Betting
-## Disbursement
-1. Betting
-1. Wallet
-## Notifications
-1. Send out notification to users. 
+Place the user flow designs here
 
 # To Do
+1. Unit Tests
+1. Integration Tests
 1. Notifications Service
 1. Event Logger
-1. Clean up
-1. Strip integration
-1. Integration tests.
+1. Stripe integration
 1. Set up Travis
 1. Set up Infra (AWS Lambda, ec2 with mongos, elastic cache redis, api gateway)
 1. DB - Mongo -> DynamoDB

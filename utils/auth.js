@@ -7,7 +7,10 @@ const getHash = (text, salt) => {
   return bcrypt.hashSync(text, lclSalt);
 };
 
-const isValid = (text, hash) => bcrypt.compareSync(text, hash);
+const isValid = (text, hash) => {
+  if (!text || !hash) return false;
+  return bcrypt.compareSync(text, hash);
+};
 
 module.exports = {
   getHash,
