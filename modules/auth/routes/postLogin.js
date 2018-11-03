@@ -2,6 +2,8 @@
  * Log In
  *
  * @todo encrypt the body
+ * @todo - Write up - Session store in cache because, at worst they user will have to log back in.
+ * @todo - Monitoring
  */
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -9,7 +11,7 @@ const Joi = require('joi');
 const { response, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
-const getTokenInfo = async (user) => {
+const getNewTokenInfo = async (user, password) => {
   const data = {
     email: user.email,
     id: user.id,
@@ -37,9 +39,9 @@ const handler = async (req, res) => {
 
   if (!user || !auth.isValid(password, user.password)) return response.error('Invalid login', 401);
 
-  const tokenInfo = await getTokenInfo(user);
+  const tokenInfo = await getNewTokenInfo(user, password);
 
-  // Save in session store
+  // Save in session store (cache)
   cache.setex(tokenInfo.token, JSON.stringify(tokenInfo));
 
   return res.send({
@@ -53,7 +55,7 @@ module.exports = fastify => fastify.route({
   handler,
   schema: {
     body: {
-      email: Joi.string().required(),
+      email: Joi.string().email().required(),
       password: Joi.string().required(),
     },
   },
