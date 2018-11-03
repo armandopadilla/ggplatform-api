@@ -38,18 +38,18 @@ const handler = async (req, res) => {
     const account = await db.collection(collection.ACCOUNT_NAME).insertOne(accountObj);
 
     // Create wallet - Could be a async call
-    const wallet = await createWallet(accountObj.id, db);
+    const wallet = await createWallet(accountObj._id, db);
 
     // Send out welcome email - Could be async call
     await sendWelcomeEmail(account);
 
     // Compose the response
     const data = {
-      account,
+      accountObj,
       wallet,
     };
 
-    if (data.insertedCount) return response.success(data);
+    if (data) return response.success(data);
     return response.error();
   } catch (error) {
     return response.error(error);

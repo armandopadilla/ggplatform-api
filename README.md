@@ -1,9 +1,38 @@
 # Account
-1. POST  /account - create account
+## POST  /account - create account
+**Params:**
+
+**Response:**
+
+
 1. GET /account - Get specific account
 1. GET /account/list - Get all accounts
 1. DELETE /account/:accountId - Delete account
 1. PATCH - /account/:accountId - Update the account
+
+# Authentication
+## POST -  Login - Log the user in
+**Params:**
+1. email  - Email Address of account to log into.
+1. password - Password of account to log into.
+
+**Response:**
+
+`{
+    "token": "JWT HERE"
+}`
+
+## POST -  Log out
+**Params:**
+None
+
+**Required Headers**
+1. Authorization - "Bearer JWT_HERE"
+
+**Response:**
+
+`{}`
+
 
 # Wallet 
 1. POST /wallet - Create a new wallet
