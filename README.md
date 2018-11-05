@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Wiredpanda/phoenix-apis.svg?branch=master)](https://travis-ci.com/Wiredpanda/phoenix-apis)
+
 # Account
 ## POST  /account - create account
 **Params:**
