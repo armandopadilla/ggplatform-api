@@ -11,8 +11,9 @@ const handler = async (req, res) => {
 
   try {
     const contests = await db.collection(collection.CONTEST_NAME)
-      .find({});
+      .find({}).toArray();
 
+    console.log(contests);
     return response.success(contests || []);
   } catch (error) {
     return response.error(error);
