@@ -1,7 +1,58 @@
 [![Build Status](https://travis-ci.com/Wiredpanda/phoenix-apis.svg?branch=master)](https://travis-ci.com/Wiredpanda/phoenix-apis)
 
 #Documentation
+Full API documentation can be found []
 
+
+#Technology
+1. MongoDB - https://cloud.mongodb.com  (Free Tier - Stage)
+1. AWS - Lambda (APIs & Schedule Jobs)
+1. AWS - SES (Email Service)
+1. AWS - SNS (Push Service)
+1. NodeJS - 8.X
+1. Travis-CI - CD/CI
+
+#Architecture
+
+## AWS
+As noted above 99% of our infra is hosted in AWS for cost savings. 
+We use lambdas to run our APIS and scheduled jobs and use SNS and SES to communicate with the users via email and push notifications.
+Future thoughts are to use SNS for an event based architecture.
+
+## Access
+If you need access please ping Armadno Padilla
+
+
+## MongoDB 
+Our MongoDB instance is hosted by MongoDB Atlas.
+https://cloud.mongodb.com
+
+## Environments
+1. Prod - Production instance. (Will exist before we go to live)
+1. Stage - Used for testing before release
+
+## Access
+To gain acces please ping Armando Padilla
+
+
+
+#Deployment
+
+## Local Deployment
+
+
+## Production Deployment
+No production deployments are allows outside of our CD/CI pipeline. 
+
+## Access
+If you need access to Travis-CI please ping Armando Padilla
+
+## CI
+https://travis-ci.org/Wiredpanda/phoenix-apis
+
+
+# System Documentation
+Some general pointers about different services in the system.
 
 # Bet
 1. User submits a bet
@@ -15,18 +66,14 @@
 Will not be triggered by a API call
 
 # Event Logger
-1. POST - /event - Save an event
 1. GET - /event/list - Fetch all the events - Some searching
 1. No deleting
 
-# CI
-https://travis-ci.org/Wiredpanda/phoenix-apis
-
 # Schedule Hooks
 1. Every 5 minutes run and lock contests within X minutes from ending.
+
 # General Hooks
 1. On complete game issue out the winnings
-
 
 # General Flow
 Place the user flow designs here.  Outline how the FE works with the BE to do specific things
