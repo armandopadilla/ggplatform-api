@@ -7,7 +7,6 @@
  */
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const Joi = require('joi');
 const { response, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
@@ -54,12 +53,29 @@ module.exports = fastify => fastify.route({
   url: '/login',
   handler,
   schema: {
+    tags: ['Auth'],
+    description: 'Log the user in and receive a JWT.',
+    summary: 'Log in',
     body: {
-      email: Joi.string().email().required(),
-      password: Joi.string().required(),
+      email: { type: 'string', format: 'email', description: 'Email of account to login with' },
+      password: { type: 'string', description: 'Password of account to login with.'},
     },
+    required: ['email', 'password'],
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object',
+            properties: {
+              "token": { type: 'string' }
+            }
+          }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db,
     cache: fastify.redis,

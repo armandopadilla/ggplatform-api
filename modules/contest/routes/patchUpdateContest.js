@@ -2,7 +2,6 @@
  * Update a contest - admin only
  *
  */
-const Joi = require('joi');
 const { ObjectID } = require('mongodb');
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
@@ -47,15 +46,45 @@ module.exports = fastify => fastify.route({
   url: '/:contestId',
   handler,
   schema: {
+    tags: ['Contest'],
+    description: 'Update specific contest',
+    summary: 'Update contest',
     body: {
-      title: Joi.string().required(),
-      startDateTime: Joi.string().required(),
-      endDateTime: Joi.string().required(),
-      pot: Joi.number(),
-      streamURL: Joi.string().required(),
+      type: 'object',
+      properties: {
+        title: { type: 'string', description: 'Contest title displayed to user.' },
+        startDateTime: { type: 'string', format: 'date-time', description: 'Start date time of contest.' },
+        endDateTime: { type: 'string', format: 'date-time', description: 'End date time of contest' },
+        pot: { type: 'number', description: 'total amount in pot' },
+        streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.', format: 'url' },
+        status: { type: 'string', description: 'Contest status' },
+      }
     },
+    params: {
+      contestId: { type: 'string', description: 'Unique contest id.' }
+    },
+    required: ['title', 'startDatetime', 'endDateTime', 'streamURL'],
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object',
+            properties: {
+              _id: { type: 'string' },
+              title: { type: 'string', description: 'Contest title displayed to user.' },
+              startDateTime: { type: 'string', format: 'date-time', description: 'Start date time of contest.' },
+              endDateTime: { type: 'string', format: 'date-time', description: 'End date time of contest' },
+              pot: { type: 'number', description: 'total amount in pot' },
+              streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.' },
+              status: { type: 'string', description: 'Contest status' },
+            }
+          }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db, // This seems off.
   },

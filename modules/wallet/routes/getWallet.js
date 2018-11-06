@@ -4,7 +4,6 @@
  * @param accountId
  * @param fastify
  */
-const Joi = require('joi');
 const ObjectID = require('mongodb').ObjectId;
 const { db: collection } = require('../../../config');
 
@@ -26,11 +25,31 @@ module.exports = fastify => fastify.route({
   url: '/:walletId',
   handler,
   schema: {
+    tags: ['Wallet'],
+    description: 'Fetch specific wallet from system.',
+    summary: 'Fetch specific wallet',
     params: {
-      walletId: Joi.string().required(),
+      walletId: { type: 'string', description: 'Unique Id of wallet to fetch.' }
     },
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object',
+            properties: {
+              ownerId: { type: 'string', description: 'Unique owner id.' },
+              balance: { type: 'number', description: 'Current ballance in this wallet.' },
+              currency: { type: 'string', description: 'Currency type.' },
+              createdDate: { type: 'string', format: 'date-time', description: 'Date Time of wallet creation.' },
+              updateDate: { type: 'string', format: 'date-time', description: 'Date Time of wallet last update.' }
+            }
+          }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db,
   },

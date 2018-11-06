@@ -2,7 +2,6 @@
  * Update a specific account
  *
  */
-const Joi = require('joi');
 const { ObjectID } = require('mongodb');
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
@@ -44,17 +43,46 @@ module.exports = fastify => fastify.route({
   url: '/:accountId',
   handler,
   schema: {
+    tags: ['Account'],
+    description: 'Update a specific account.',
+    summary: 'Update account',
     params: {
-      accountId: Joi.string().required(),
+      accountId: { type: 'string', description: 'Unique account Id.' },
     },
     body: {
-      firstName: Joi.string().required(),
-      username: Joi.string().required(),
-      email: Joi.string().email(),
-      dob: Joi.string().required(),
+      type: 'object',
+      properties: {
+        firstName: { type: 'string', description: 'New first name for account.' },
+        username: { type: 'string', description: 'New username for account.' },
+        email: { type: 'string', description: 'New email for account.', format: 'email' },
+        dob: { type: 'string', description: 'New date of birth for account.', format: 'date' },
+      },
     },
+    required: ['accountId'],
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object',
+            properties: {
+              "_id": { type: 'string' },
+              "firstName": { type: 'string' },
+              "username": { type: 'string' },
+              "email": { type: 'string', format: 'email' },
+              "dob": { type: 'string', format: 'date' },
+              "acceptTerms": { type: 'string' },
+              "status": { type: 'string', enum: ['yes', 'no'] },
+              "isAdmin": { type: 'string', enum: ['yes', 'no'] },
+              "createdDate": { type: 'string', format: 'date-time' },
+              "updateDate": { type: 'string', format: 'date-time' }
+            }
+          }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db, // This seems off.
   },

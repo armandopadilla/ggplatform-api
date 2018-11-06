@@ -4,7 +4,6 @@
  * Has basic info on the contest and participant count.
  * @todo  do we need a list of users in the contest?  I would think not?
  */
-const Joi = require('joi');
 const { ObjectID } = require('mongodb');
 const { response } = require('../../../utils');
 const { db: collection, errors } = require('../../../config');
@@ -31,11 +30,34 @@ module.exports = fastify => fastify.route({
   url: '/:contestId',
   handler,
   schema: {
+    tags: ['Contest'],
+    description: 'Fetch a contest in the system',
+    summary: 'Fetch a contest',
     params: {
-      contestId: Joi.string().required(),
+      contestId: { type: 'string', description: 'Unique contest Id' }
     },
+    required: ['contestId'],
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object',
+            properties: {
+              _id: { type: 'string' },
+              title: { type: 'string', description: 'Contest title displayed to user.' },
+              startDateTime: { type: 'string', format: 'date-time', description: 'Start date time of contest.' },
+              endDateTime: { type: 'string', format: 'date-time', description: 'End date time of contest' },
+              pot: { type: 'number', description: 'total amount in pot' },
+              streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.' },
+              status: { type: 'string', description: 'Contest status' },
+            }
+          }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db,
   },

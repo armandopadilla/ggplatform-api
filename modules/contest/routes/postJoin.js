@@ -7,7 +7,6 @@
  * If enough funds then withdraw and enter the user into contest
  * If NOT enough funds return a not-enough-funds error. FE can then take the user to another screen
  */
-const Joi = require('joi');
 const ObjectID = require('mongodb').ObjectId;
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
@@ -48,11 +47,31 @@ module.exports = fastify => fastify.route({
   url: '/:contestId/join',
   handler,
   schema: {
+    tags: ['Contest'],
+    description: 'Join a specific contest',
+    summary: 'Join contest',
     body: {
-      userId: Joi.string().required(),
+      type: 'object',
+      properties: {
+        userId: { type: 'string', description: 'Unique user id.' }
+      }
     },
+    params: {
+      contestId: { type: 'string', description: 'Unique contest id to join.' }
+    },
+    required: ['contestId', 'userId'],
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object'
+          }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db,
   },

@@ -6,7 +6,6 @@
  * 3. Do we send out any notification to the participants?
  * 4. Should there be a reason why this was canceled?  For auditing.
  */
-const Joi = require('joi');
 const { ObjectID } = require('mongodb');
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
@@ -34,11 +33,25 @@ module.exports = fastify => fastify.route({
   url: '/:contestId',
   handler,
   schema: {
+    tags: ['Contest'],
+    description: 'Delete a specific contest from the system.',
+    summary: 'Delete contest',
     params: {
-      contestId: Joi.string().required(),
+      contestId: { type: 'string', description: 'Unique contest id' }
     },
+    required: ['contestId'],
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object'
+          }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db, // This seems off.
   },
