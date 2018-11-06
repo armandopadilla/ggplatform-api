@@ -3,7 +3,6 @@
  *
  * @todo Can users fetch the profiles of other users?
  */
-const Joi = require('joi');
 const ObjectId = require('mongodb').ObjectID;
 const { response } = require('../../../utils');
 const { db: collection, errors } = require('../../../config');
@@ -29,11 +28,37 @@ module.exports = fastify => fastify.route({
   url: '/:accountId',
   handler,
   schema: {
+    tags: ['Account'],
+    description: 'Fetch information for specific Account.',
+    summary: 'Fetch specific account info',
     params: {
-      accountId: Joi.string().required(),
+      accountId: { type: 'string', description: 'Unique Id of account' }
     },
+    required: ['accountId'],
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object',
+            properties: {
+              "_id": { type: 'string' },
+              "firstName": { type: 'string' },
+              "username": { type: 'string' },
+              "email": { type: 'string', format: 'email' },
+              "dob": { type: 'string', format: 'date' },
+              "acceptTerms": { type: 'string' },
+              "status": { type: 'string', enum: ['yes', 'no'] },
+              "isAdmin": { type: 'string', enum: ['yes', 'no'] },
+              "createdDate": { type: 'string', format: 'date-time' },
+              "updateDate": { type: 'string', format: 'date-time' }
+            }
+          }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db, // This seems off.
   },

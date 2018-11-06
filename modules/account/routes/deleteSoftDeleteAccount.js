@@ -2,12 +2,10 @@
  * Delete a specific account
  *
  * @todo - can only be called by an admin
- * @todo - validation for status
  * @todo - logging to make sure we have an audit trail
  * @todo - What happens to the wallet and its funds?
  */
 
-const Joi = require('joi');
 const { ObjectID } = require('mongodb');
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
@@ -15,15 +13,12 @@ const { db: collection } = require('../../../config');
 const handler = async (req, res) => {
   const { accountId } = req.params;
   const { db } = res.context.config;
-  const {
-    status,
-  } = req.body;
 
   try {
     const data = await db.collection(collection.ACCOUNT_NAME)
       .updateOne(
         { id: ObjectID(accountId) },
-        { $set: { status } },
+        { $set: { status: 'deleted' } },
       );
 
     if (data.matchedCount) return response.success({});
@@ -35,18 +30,27 @@ const handler = async (req, res) => {
 
 
 module.exports = fastify => fastify.route({
-  method: 'PATCH',
+  method: 'DELETE',
   url: '/:accountId',
   handler,
   schema: {
+    tags: ['Account'],
+    description: 'Delete a specific account from system. (Soft)',
+    summary: 'Delete account',
     params: {
-      accountId: Joi.string().required(),
+      accountId: { type: 'string', description: 'Unique account Id.'}
     },
-    body: {
-      status: Joi.string().required(),
-    },
+    require: ['accountId', 'status'],
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": { type: 'object' }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db, // This seems off.
   },

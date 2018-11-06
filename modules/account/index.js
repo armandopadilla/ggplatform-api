@@ -2,6 +2,7 @@ const getAccount = require('./routes/getAccount');
 const getAccounts = require('./routes/getAccounts');
 const postCreateAccount = require('./routes/postCreateAccount');
 const patchUpdateAccount = require('./routes/patchUpdateAccount');
+const deleteAccount = require('./routes/deleteSoftDeleteAccount');
 
 module.exports = (fastify, options, next) => {
   // GET /account/:accountId
@@ -15,6 +16,9 @@ module.exports = (fastify, options, next) => {
 
   // PATCH /account
   patchUpdateAccount(fastify);
+
+  // PATCH - /account
+  deleteAccount(fastify);
 
   next();
 };

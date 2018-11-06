@@ -19,6 +19,22 @@ module.exports = fastify => fastify.route({
   method: 'POST',
   url: '/logout',
   handler,
+  schema:{
+    tags: ['Auth'],
+    description: 'Log out. Removes the JWT from system',
+    summary: 'Log out',
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object'
+          }
+        }
+      }
+    }
+  },
   config: {
     cache: fastify.redis,
   },

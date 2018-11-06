@@ -2,7 +2,6 @@
  * Create a new accout
  *
  */
-const Joi = require('joi');
 const { response, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
 const createWallet = require('../../wallet/events/create');
@@ -62,16 +61,45 @@ module.exports = fastify => fastify.route({
   url: '/',
   handler,
   schema: {
+    tags: ['Account'],
+    description: 'Create new account.',
+    summary: 'Create account',
     body: {
-      firstName: Joi.string().required(),
-      username: Joi.string().required(),
-      email: Joi.string().email(),
-      password: Joi.string().required(),
-      dob: Joi.string().required(),
-      acceptTerms: Joi.string().required(),
+      type: 'object',
+      properties: {
+        firstName: { type: 'string' },
+        username: { type: 'string' },
+        email: { type: 'string', format: 'email' },
+        password: { type: 'string' },
+        dob: { type: 'string', format: 'date' },
+        acceptTerms: { type: 'string' },
+      },
     },
+    required: ['firstName', 'username', 'email', 'password', 'dob', 'acceptedTerms'],
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object',
+            properties: {
+              "_id": { type: 'string' },
+              "firstName": { type: 'string' },
+              "username": { type: 'string' },
+              "email": { type: 'string', format: 'email' },
+              "dob": { type: 'string', format: 'date' },
+              "acceptTerms": { type: 'string' },
+              "status": { type: 'string', enum: ['yes', 'no'] },
+              "isAdmin": { type: 'string', enum: ['yes', 'no'] },
+              "createdDate": { type: 'string', format: 'date-time' },
+              "updateDate": { type: 'string', format: 'date-time' }
+            }
+          }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db, // This seems off.
   },

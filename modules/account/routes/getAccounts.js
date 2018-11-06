@@ -23,6 +23,23 @@ module.exports = fastify => fastify.route({
   method: 'GET',
   url: '/list',
   handler,
+  schema: {
+    tags: ['Account'],
+    description: 'Fetch a list of accounts in the system.',
+    summary: 'Fetch list of accounts',
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'array',
+            items: [ { type: 'object' } ]
+          }
+        }
+      }
+    }
+  },
   config: {
     db: fastify.mongo.db, // This seems off.
   },

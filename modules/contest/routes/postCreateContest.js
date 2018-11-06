@@ -3,7 +3,6 @@
  * status = pending | in_progress | distributing_pot | paused | completed
  *
  */
-const Joi = require('joi');
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
@@ -45,16 +44,42 @@ module.exports = fastify => fastify.route({
   url: '/',
   handler,
   schema: {
+    tags: ['Contest'],
+    description: 'Create new contest',
+    summary: 'Create contest',
     body: {
-      title: Joi.string().required(),
-      startDateTime: Joi.string().required(),
-      endDateTime: Joi.string().required(),
-      pot: Joi.number(),
-      streamURL: Joi.string().required(),
-      status: Joi.string().required(),
+      type: 'object',
+      properties: {
+        title: { type: 'string', description: 'Contest title displayed to user.' },
+        startDateTime: { type: 'string', format: 'date-time', description: 'Start date time of contest.' },
+        endDateTime: { type: 'string', format: 'date-time', description: 'End date time of contest' },
+        pot: { type: 'number', description: 'total amount in pot' },
+        streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.' },
+        status: { type: 'string', description: 'Contest status' },
+      }
     },
+    required: ['title', 'startDateTime', 'endDateTime', 'streamURL', 'status'],
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object',
+            properties: {
+              _id: { type: 'string' },
+              title: { type: 'string', description: 'Contest title displayed to user.' },
+              startDateTime: { type: 'string', format: 'date-time', description: 'Start date time of contest.' },
+              endDateTime: { type: 'string', format: 'date-time', description: 'End date time of contest' },
+              pot: { type: 'number', description: 'total amount in pot' },
+              streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.' },
+              status: { type: 'string', description: 'Contest status' },
+            }
+          }
+        }
+      }
+    }
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema),
   config: {
     db: fastify.mongo.db, // This seems off.
   },
