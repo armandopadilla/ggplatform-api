@@ -5,6 +5,7 @@ const patchUpdateAccount = require('./routes/patchUpdateAccount');
 const deleteAccount = require('./routes/deleteSoftDeleteAccount');
 
 module.exports = (fastify, options, next) => {
+
   // GET /account/:accountId
   getAccount(fastify);
 

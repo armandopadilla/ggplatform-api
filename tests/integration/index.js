@@ -1,4 +1,4 @@
-1. create a new account
+/*1. create a new account
 2. Associate CC and Deposit first money
 3. pull up contest (matches)
 4. View a contest (match)
@@ -7,3 +7,4 @@
 7. View Profile
 8. Deposit More Funds
 9. Withdraw funds
+*/
