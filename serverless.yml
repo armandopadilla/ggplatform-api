@@ -1,7 +1,7 @@
 service: "gglol-api"
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs8.10
   stage: dev
   region: us-west-1
   iamRoleStatements:
@@ -21,14 +21,13 @@ provider:
 
 functions:
   app:
-    handler: index.handler
+    handler: server.handler
     DependsOn: IamPolicyLambdaExecution
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
     environment:
-      MONGO_HOST: ''
-      MONGO_DB: ''
+      MONGO_CONN_STRING: ''
 
 tags:
   project:gglol
