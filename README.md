@@ -1,10 +1,10 @@
 [![Build Status](https://travis-ci.com/Wiredpanda/phoenix-apis.svg?branch=master)](https://travis-ci.com/Wiredpanda/phoenix-apis)
 
-#Documentation
+# Documentation
 Full API documentation can be found [here](http://gglol-docs.s3-website-us-west-1.amazonaws.com/|asdfa)
 
 
-#Technology
+# Technology
 1. MongoDB - https://cloud.mongodb.com  (Free Tier - Stage)
 1. AWS - Lambda (APIs & Schedule Jobs)
 1. AWS - SES (Email Service)
@@ -12,7 +12,7 @@ Full API documentation can be found [here](http://gglol-docs.s3-website-us-west-
 1. NodeJS - 8.X
 1. Travis-CI - CD/CI
 
-#Architecture
+# Architecture
 
 ## AWS
 As noted above 99% of our infra is hosted in AWS for cost savings. 
