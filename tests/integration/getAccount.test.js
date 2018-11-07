@@ -26,7 +26,6 @@ describe ('Get Account', () => {
 
   after(async () => {
     await db.collection(collection.ACCOUNT_NAME).deleteOne({ username: 'TEST_USERNAME' });
-    await fastify.close()
   });
 
   it('should return account info with correct response payload', async () => {

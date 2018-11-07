@@ -32,10 +32,7 @@ module.exports = fastify => fastify.route({
         description: 'Successful response',
         type: 'object',
         properties: {
-          "data": {
-            type: 'array',
-            items: [ { type: 'object' } ]
-          }
+          'data': { type: "array", items: [{ type: 'object' }] }
         }
       }
     }
