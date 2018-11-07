@@ -2,7 +2,7 @@ module.exports = {
   db: {
     connInfo: {
       forceClose: true,
-      url: process.env.MONGO_CONN_STRING,
+      url: 'mongodb://localhost:27017/phoenix',
       useNewUrlParser: true,
     },
     ACCOUNT_NAME: 'accounts',
@@ -15,6 +15,6 @@ module.exports = {
     CONTEST_NOT_FOUND: 'Contest not found',
   },
   server: {
-    logger: true
+    logger: false
   }
 };

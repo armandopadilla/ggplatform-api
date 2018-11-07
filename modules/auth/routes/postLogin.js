@@ -57,8 +57,11 @@ module.exports = fastify => fastify.route({
     description: 'Log the user in and receive a JWT.',
     summary: 'Log in',
     body: {
-      email: { type: 'string', format: 'email', description: 'Email of account to login with' },
-      password: { type: 'string', description: 'Password of account to login with.'},
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email', description: 'Email of account to login with' },
+        password: { type: 'string', description: 'Password of account to login with.'},
+      }
     },
     required: ['email', 'password'],
     response: {
