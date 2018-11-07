@@ -1,6 +1,6 @@
 const should = require('should');
 const { auth } = require('../../../utils');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 describe ('Utils Auth Test Suite', () => {
   describe ('auth tests', () => {
