@@ -1,19 +1,16 @@
-const fastify = require('fastify')({ logger: true });
-const { db } = require('./config');
+const config = require('./config');
+const fastify = require('fastify')(config.server);
+const db = config.db;
 
 // Register plugins
 fastify.register(require('fastify-cors'), { origin: true });
 fastify.register(require('fastify-boom'));
-fastify.register(require('fastify-mongodb'), {
-  forceClose: true,
-  url: db.CONNECTION_STRING,
-  useNewUrlParser: true,
+fastify.register(require('fastify-mongodb'), config.db.connInfo);
+
+
+fastify.register(require('fastify-redis'), {
+  host: '127.0.0.1',
 });
-
-
-//fastify.register(require('fastify-redis'), {
-//  host: '127.0.0.1',
-//});
 
 fastify.register(require('fastify-swagger'), {
   routePrefix: '/documentation',
@@ -61,47 +58,46 @@ const start = async () => {
   }
 };
 
-
-if (require.main === module) {
-  start();
+// I need to clean this up.
+if (process.env.NODE_ENV === 'test') {
+  module.exports = fastify;
 } else {
+  if (require.main === module) {
+    start();
+  } else {
+    exports.handler = (event, context, callback) => {
 
-  exports.handler = (event, context, callback) => {
+      context.callbackWaitsForEmptyEventLoop = false;
 
-    context.callbackWaitsForEmptyEventLoop = false;
+      //construct the query string...blah
+      let query = '';
+      const queryString = event.queryStringParameters;
+      if (queryString) {
+        Object.keys(queryString).forEach((key) => {
+          query += key+'='+queryString[key]+'&';
+        });
+        query = '?'+query;
+      }
 
-    //construct the query string...blah
-    let query = '';
-    const queryString = event.queryStringParameters;
-    if (queryString) {
-      Object.keys(queryString).forEach((key) => {
-        query += key+'='+queryString[key]+'&';
-      });
-      query = '?'+query;
-    }
-
-    // map lambda event
-    const options = {
-      method: event.httpMethod,
-      url: event.path,
-      payload: event.body,
-      headers: event.headers,
-      validate: false
-    };
-
-    fastify.inject(options, function(err, res) {
-      console.log("res", res);
-      const response = {
-        statusCode: res.statusCode,
-        body: res.payload,
-        headers: res.headers
+      // map lambda event
+      const options = {
+        method: event.httpMethod,
+        url: event.path,
+        payload: event.body,
+        headers: event.headers,
+        validate: false
       };
 
-      callback(null, response);
-    });
+      fastify.inject(options, function(err, res) {
+        const response = {
+          statusCode: res.statusCode,
+          body: res.payload,
+          headers: res.headers
+        };
 
-  };
+        callback(null, response);
+      });
+
+    };
+  }
 }
-
-
-module.exports = fastify;
