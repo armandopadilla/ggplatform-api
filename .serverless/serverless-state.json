@@ -9,7 +9,7 @@
       "region": "us-west-1",
       "variableSyntax": "\\${([ ~:a-zA-Z0-9._'\",\\-\\/\\(\\)]+?)}",
       "name": "aws",
-      "runtime": "nodejs6.10",
+      "runtime": "nodejs8.10",
       "iamRoleStatements": [
         {
           "Effect": "Allow",
@@ -121,10 +121,10 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/gglol-api/dev/1541382309961-2018-11-05T01:45:09.961Z/gglol-api.zip"
+                "S3Key": "serverless/gglol-api/dev/1541541590661-2018-11-06T21:59:50.661Z/gglol-api.zip"
               },
               "FunctionName": "gglol-api-dev-app",
-              "Handler": "index.handler",
+              "Handler": "server.handler",
               "MemorySize": 1024,
               "Role": {
                 "Fn::GetAtt": [
@@ -132,12 +132,11 @@
                   "Arn"
                 ]
               },
-              "Runtime": "nodejs6.10",
+              "Runtime": "nodejs8.10",
               "Timeout": 6,
               "Environment": {
                 "Variables": {
-                  "MONGO_HOST": "",
-                  "MONGO_DB": ""
+                  "MONGO_CONN_STRING": ""
                 }
               }
             },
@@ -146,14 +145,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "AppLambdaVersion2Lm52lwGishPpvIttik9sMxI78ylFGAipRKozW7nMc4": {
+          "AppLambdaVersionpIzM2IGmw0aFV7nWbbEnovwNTj9VRs8tkr95yHDuzxg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "nj+gFTK65qLnbHNKIjPDEyhm0HOAJscQPT+OfovLUoM="
+              "CodeSha256": "MSbw7Cky1JpIrFfM81rU21BdqEUWQ4vvgK8TiqYJBRQ="
             }
           },
           "ApiGatewayRestApi": {
@@ -271,7 +270,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1541382310002": {
+          "ApiGatewayDeployment1541541590707": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -341,7 +340,7 @@
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersion2Lm52lwGishPpvIttik9sMxI78ylFGAipRKozW7nMc4"
+              "Ref": "AppLambdaVersionpIzM2IGmw0aFV7nWbbEnovwNTj9VRs8tkr95yHDuzxg"
             }
           },
           "ServiceEndpoint": {
@@ -386,7 +385,7 @@
     "pluginsData": {},
     "functions": {
       "app": {
-        "handler": "index.handler",
+        "handler": "server.handler",
         "DependsOn": "IamPolicyLambdaExecution",
         "events": [
           {
@@ -397,21 +396,20 @@
           }
         ],
         "environment": {
-          "MONGO_HOST": "",
-          "MONGO_DB": ""
+          "MONGO_CONN_STRING": ""
         },
         "name": "gglol-api-dev-app",
         "package": {},
         "memory": 1024,
         "timeout": 6,
-        "runtime": "nodejs6.10",
+        "runtime": "nodejs8.10",
         "vpc": {}
       }
     },
     "artifact": "/Users/apadilla/Work/gglol/phoenix-apis/.serverless/gglol-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/gglol-api/dev/1541382309961-2018-11-05T01:45:09.961Z",
+    "artifactDirectoryName": "serverless/gglol-api/dev/1541541590661-2018-11-06T21:59:50.661Z",
     "artifact": "gglol-api.zip"
   }
 }

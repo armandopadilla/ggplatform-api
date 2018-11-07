@@ -1,5 +1,6 @@
 module.exports = {
   db: {
+    CONNECTION_STRING: process.env.MONGO_CONN_STRING,
     ACCOUNT_NAME: 'accounts',
     WALLET_NAME: 'wallets',
     EVENTLOGGER__NAME: 'event_logger',

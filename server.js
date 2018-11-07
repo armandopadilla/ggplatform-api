@@ -1,16 +1,19 @@
 const fastify = require('fastify')({ logger: true });
+const { db } = require('./config');
 
 // Register plugins
+fastify.register(require('fastify-cors'), { origin: true });
 fastify.register(require('fastify-boom'));
 fastify.register(require('fastify-mongodb'), {
   forceClose: true,
-  url: 'mongodb://localhost:27017/phoenix',
+  url: db.CONNECTION_STRING,
   useNewUrlParser: true,
 });
 
-fastify.register(require('fastify-redis'), {
-  host: '127.0.0.1',
-});
+
+//fastify.register(require('fastify-redis'), {
+//  host: '127.0.0.1',
+//});
 
 fastify.register(require('fastify-swagger'), {
   routePrefix: '/documentation',
@@ -65,6 +68,18 @@ if (require.main === module) {
 
   exports.handler = (event, context, callback) => {
 
+    context.callbackWaitsForEmptyEventLoop = false;
+
+    //construct the query string...blah
+    let query = '';
+    const queryString = event.queryStringParameters;
+    if (queryString) {
+      Object.keys(queryString).forEach((key) => {
+        query += key+'='+queryString[key]+'&';
+      });
+      query = '?'+query;
+    }
+
     // map lambda event
     const options = {
       method: event.httpMethod,
@@ -75,9 +90,11 @@ if (require.main === module) {
     };
 
     fastify.inject(options, function(err, res) {
+      console.log("res", res);
       const response = {
         statusCode: res.statusCode,
-        body: res.payload
+        body: res.payload,
+        headers: res.headers
       };
 
       callback(null, response);
