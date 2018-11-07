@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/Wiredpanda/phoenix-apis.svg?branch=master)](https://travis-ci.com/Wiredpanda/phoenix-apis)
 
 #Documentation
-Full API documentation can be found []
+Full API documentation can be found [here](http://gglol-docs.s3-website-us-west-1.amazonaws.com/|asdfa)
 
 
 #Technology
@@ -40,7 +40,6 @@ To gain acces please ping Armando Padilla
 
 ## Local Deployment
 
-
 ## Production Deployment
 No production deployments are allows outside of our CD/CI pipeline. 
 
@@ -50,6 +49,14 @@ If you need access to Travis-CI please ping Armando Padilla
 ## CI
 https://travis-ci.org/Wiredpanda/phoenix-apis
 
+
+## Documentation
+1. Create an S3 bucket. 
+1. Convert S3 bucket to Web Hosted Bucket
+1. Download [Swagger-UI](https://github.com/swagger-api/swagger-ui/releases) 
+1. Upload the `dist` into S3 bucket.
+1. Load the S3 bucket on a browser.
+1. The Documentation URL will be provided when you push the code to lambda. Within the Travis-CI console.
 
 # System Documentation
 Some general pointers about different services in the system.
@@ -98,3 +105,4 @@ Place the user flow designs here.  Outline how the FE works with the BE to do sp
 1. Tech - NodeJS -> Go
 1. Change out to GraphQL
 1. Integrate SAM
+1. Auto Deploy of the documentation.
