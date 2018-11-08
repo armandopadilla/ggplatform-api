@@ -26,7 +26,6 @@ describe ('Get Account', () => {
 
   after(async () => {
     await db.collection(collection.ACCOUNT_NAME).deleteOne({ username: 'TEST_USERNAME' });
-    await fastify.close()
   });
 
   it('should return account info with correct response payload', async () => {
@@ -35,7 +34,7 @@ describe ('Get Account', () => {
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8');
 
-    response.body.should.have.property('data');
+    response.body.should.have.only.property('data');
     response.body.data.should.have.property('username', accountObj.username);
     response.body.data.should.have.property('firstName', accountObj.firstName);
     response.body.data.should.have.property('email', accountObj.email);
