@@ -15,7 +15,7 @@ const handler = async (req, res) => {
     email,
     password,
     dob,
-    acceptTerms,
+    acceptedTerms,
   } = req.body;
 
   const hashPass = auth.getHash(password);
@@ -25,7 +25,7 @@ const handler = async (req, res) => {
     email,
     password: hashPass,
     dob,
-    acceptTerms,
+    acceptedTerms,
     status: 'active', // Can be active | inactive (soft delete)
     isAdmin: false,
     createdDate: new Date(),
@@ -44,10 +44,11 @@ const handler = async (req, res) => {
 
     // Compose the response
     const data = {
-      accountObj,
+      account: accountObj,
       wallet,
     };
 
+    console.log(data);
     if (data) return response.success(data);
     return response.error();
   } catch (error) {
@@ -72,10 +73,10 @@ module.exports = fastify => fastify.route({
         email: { type: 'string', format: 'email' },
         password: { type: 'string' },
         dob: { type: 'string', format: 'date' },
-        acceptTerms: { type: 'string' },
+        acceptedTerms: { type: 'string' },
       },
+      required: ['firstName', 'username', 'email', 'password', 'dob', 'acceptedTerms'],
     },
-    required: ['firstName', 'username', 'email', 'password', 'dob', 'acceptedTerms'],
     response: {
       200: {
         description: 'Successful response',
@@ -84,16 +85,30 @@ module.exports = fastify => fastify.route({
           "data": {
             type: 'object',
             properties: {
-              "_id": { type: 'string' },
-              "firstName": { type: 'string' },
-              "username": { type: 'string' },
-              "email": { type: 'string', format: 'email' },
-              "dob": { type: 'string', format: 'date' },
-              "acceptTerms": { type: 'string' },
-              "status": { type: 'string', enum: ['yes', 'no'] },
-              "isAdmin": { type: 'string', enum: ['yes', 'no'] },
-              "createdDate": { type: 'string', format: 'date-time' },
-              "updateDate": { type: 'string', format: 'date-time' }
+              "account": {
+                type: 'object',
+                properties: {
+                  "_id": { type: 'string' },
+                  "firstName": { type: 'string' },
+                  "username": { type: 'string' },
+                  "email": { type: 'string', format: 'email' },
+                  "dob": { type: 'string', format: 'date' },
+                  "acceptedTerms": { type: 'string' },
+                  "createdDate": { type: 'string', format: 'date-time' },
+                  "updateDate": { type: 'string', format: 'date-time' }
+                }
+              },
+              "wallet": {
+                type: 'object',
+                properties: {
+                  _id: { type: 'string' },
+                  ownerId: { type: 'string' },
+                  balance: { type: 'number' },
+                  currency: { type: 'string' },
+                  createdDate: { type: 'string', format: 'date-time' },
+                  updateDate: { type: 'string', format: 'date-time' }
+                }
+              }
             }
           }
         }
