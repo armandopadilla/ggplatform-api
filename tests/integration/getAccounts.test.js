@@ -30,7 +30,7 @@ describe ('Get Accounts', () => {
   });
 
   after(async () => {
-    //await db.collection(collection.ACCOUNT_NAME).deleteOne({ email: accountObj.email });
+    await db.collection(collection.ACCOUNT_NAME).deleteMany({});
   });
 
   it('should return accounts in correct response payload', async () => {
@@ -39,7 +39,46 @@ describe ('Get Accounts', () => {
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8');
 
-    console.log(response);
+    // Check structure.
+    response.body.should.have.property('data').which.is.an.Array();
+    response.body.should.have.property('_meta');
+
+    // Check data properties
+    const data = response.body.data;
+
+    // Check the size
+    data.should.have.size(12);
+
+    // Check the first index has correct structure and data.
+    data[0].should.have.property('username', accountObj.username+'_0');
+    data[0].should.have.property('firstName', accountObj.firstName+'_0');
+    data[0].should.have.property('email', accountObj.email);
+    data[0].should.have.property('dob', accountObj.dob);
+    data[0].should.have.property('acceptTerms', accountObj.acceptTerms);
+    data[0].should.have.property('_id');
+
+    // Check _meta property (used in pagination)
+    const meta = response.body._meta;
+    meta.should.have.property('total', 12);
   });
+
+  it('should return an empty array, no users', async () => {
+    await db.collection(collection.ACCOUNT_NAME).deleteMany({});
+
+    const response = await supertest(fastify.server)
+      .get('/account/list')
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8');
+
+    // Check data properties
+    const data = response.body.data;
+
+    // Check the size
+    data.should.have.size(0);
+
+    // Check _meta property (used in pagination)
+    const meta = response.body._meta;
+    meta.should.have.property('total', 0);
+  })
 
 });

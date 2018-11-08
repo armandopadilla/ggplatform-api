@@ -10,7 +10,13 @@ const error = (errorMessage, statusCode) => {
   return Boom.badImplementation(errorMessage);
 };
 
-const success = (data) => ({ data, });
+const success = (data, total) => {
+  const response = { data };
+
+  if (total > -1) response._meta = { total }
+
+  return response;
+};
 
 module.exports = {
   error,

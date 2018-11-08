@@ -15,6 +15,6 @@ module.exports = {
     CONTEST_NOT_FOUND: 'Contest not found',
   },
   server: {
-    logger: true
+    logger: false
   }
 };
