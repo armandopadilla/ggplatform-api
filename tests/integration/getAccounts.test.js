@@ -3,7 +3,7 @@ const supertest = require('supertest');
 const fastify = require('../../server');
 const { db: collection } = require('../../config');
 
-xdescribe ('Get Accounts', () => {
+describe ('Get Accounts', () => {
 
   let db;
   let accountId;

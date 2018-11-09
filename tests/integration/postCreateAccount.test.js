@@ -13,7 +13,8 @@ describe ('Create Account', () => {
     email: 'TEST@test.com',
     password: 'TEST_PASSWORD',
     dob: '1981-03-10',
-    acceptedTerms: 'yes'
+    acceptedTerms: 'yes',
+    phone: '323-123-3456',
   };
 
   before( async () => {
@@ -40,12 +41,13 @@ describe ('Create Account', () => {
     response = await supertest(fastify.server).post('/account').send(obj).expect(400);
     response.body.message.should.equal('body should have required property \'username\'');
 
-    // Missing email
+    // Missing email or phone
     obj = Object.assign({}, accountObj);
     delete obj.email;
+    delete obj.phone;
 
     response = await supertest(fastify.server).post('/account').send(obj).expect(400);
-    response.body.message.should.equal('body should have required property \'email\'');
+    response.body.message.should.equal('email or phone required.');
 
     // Missing password
     obj = Object.assign({}, accountObj);
@@ -67,14 +69,23 @@ describe ('Create Account', () => {
 
     response = await supertest(fastify.server).post('/account').send(obj).expect(400);
     response.body.message.should.equal('body should have required property \'acceptedTerms\'');
+
+    // Terms not accepted
+    obj = Object.assign({}, accountObj);
+    obj.acceptedTerms = 'no';
+
+    response = await supertest(fastify.server).post('/account').send(obj).expect(400);
+    response.body.message.should.equal('Terms have not be accepted.');
+
+    // User too young
+    obj = Object.assign({}, accountObj);
+    obj.dob = '2012-10-03';
+
+    response = await supertest(fastify.server).post('/account').send(obj).expect(400);
+    response.body.message.should.equal('User is too young.');
   });
 
   it('should successfully save an account', async () => {
-
-    // Create the account
-    // Check the account exists.
-    // Check the wallet is also present.
-
     const response = await supertest(fastify.server)
       .post('/account')
       .send(accountObj)
@@ -104,7 +115,9 @@ describe ('Create Account', () => {
     account.should.have.property('acceptedTerms', accountObj.acceptedTerms);
 
     const wallet = data.wallet;
-
+    wallet.should.have.only.properties(['ownerId', 'balance', 'currency', 'createdDate', 'updateDate', '_id']);
+    wallet.should.have.property('balance', 0);
+    wallet.should.have.property('currency', 'USD');
   });
 
 });
