@@ -60,12 +60,10 @@ const handler = async (req, res) => {
     // Same with email.
     const usernameExists = await db.collection(collection.ACCOUNT_NAME).findOne({ username });
     if (usernameExists) return response.error(errors.ACCOUNT_USERNAME_EXISTS, 400);
-    console.log(usernameExists);
 
     // Check the email is not already taken
     const emailExists = await db.collection(collection.ACCOUNT_NAME).findOne({ email });
     if (emailExists) return response.error(errors.ACCOUNT_EMAIL_EXISTS, 400);
-    console.log(emailExists);
 
     // Create account
     const account = await db.collection(collection.ACCOUNT_NAME).insertOne(accountObj);

@@ -22,7 +22,7 @@ describe ('Create Account', () => {
     db = fastify.mongo.db;
   });
 
-  after(async () => {
+  afterEach(async () => {
     await db.collection(collection.ACCOUNT_NAME).deleteMany({});
   });
 
@@ -120,4 +120,36 @@ describe ('Create Account', () => {
     wallet.should.have.property('currency', 'USD');
   });
 
+  it ('should fail, username already in use', async () => {
+    let response = await supertest(fastify.server)
+      .post('/account')
+      .send(accountObj)
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8');
+
+    const newUser = Object.assign({}, accountObj);
+    response = await supertest(fastify.server)
+      .post('/account')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', 'application/json; charset=utf-8');
+    response.body.message.should.equal('Username already in use.');
+  });
+
+  it ('should fail, email already in use.', async () => {
+    let response = await supertest(fastify.server)
+      .post('/account')
+      .send(accountObj)
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8');
+
+    const newUser = Object.assign({}, accountObj);
+    newUser.username = 'newuser123';
+    response = await supertest(fastify.server)
+      .post('/account')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', 'application/json; charset=utf-8');
+    response.body.message.should.equal('Email already in use.');
+  });
 });
