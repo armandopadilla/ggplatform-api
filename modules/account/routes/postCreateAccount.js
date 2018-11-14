@@ -100,13 +100,13 @@ module.exports = fastify => fastify.route({
     body: {
       type: 'object',
       properties: {
-        firstName: { type: 'string' },
-        username: { type: 'string' },
-        phone: { type: 'string' },
-        email: { type: 'string', format: 'email' },
-        password: { type: 'string' },
-        dob: { type: 'string', format: 'date' },
-        acceptedTerms: { type: 'string' },
+        firstName: { type: 'string', description: 'First name of user' },
+        username: { type: 'string', description: 'User\'s username' },
+        phone: { type: 'string', description: 'XXX-XXX-XXXX eg 323-555-7056' },
+        email: { type: 'string', format: 'email', description: 'User\s email address' },
+        password: { type: 'string', description: 'Password for user', minLength: 5, maxLength: 20 },
+        dob: { type: 'string', format: 'date', description: '10/03/1981' },
+        acceptedTerms: { type: 'string', description: 'Indicates if user has accepted the TOS', enum: ['yes', 'no'] },
       },
       required: ['firstName', 'username', 'password', 'dob', 'acceptedTerms']
     },
@@ -118,20 +118,20 @@ module.exports = fastify => fastify.route({
           "data": {
             type: 'object',
             properties: {
-              "account": {
+              account: {
                 type: 'object',
                 properties: {
-                  "_id": { type: 'string' },
-                  "firstName": { type: 'string' },
-                  "username": { type: 'string' },
-                  "email": { type: 'string', format: 'email' },
-                  "dob": { type: 'string', format: 'date' },
-                  "acceptedTerms": { type: 'string' },
-                  "createdDate": { type: 'string', format: 'date-time' },
-                  "updateDate": { type: 'string', format: 'date-time' }
+                  _id: { type: 'string' },
+                  firstName: { type: 'string' },
+                  username: { type: 'string' },
+                  email: { type: 'string', format: 'email' },
+                  dob: { type: 'string', format: 'date' },
+                  acceptedTerms: { type: 'string' },
+                  createdDate: { type: 'string', format: 'date-time' },
+                  updateDate: { type: 'string', format: 'date-time' }
                 }
               },
-              "wallet": {
+              wallet: {
                 type: 'object',
                 properties: {
                   _id: { type: 'string' },
@@ -144,6 +144,24 @@ module.exports = fastify => fastify.route({
               }
             }
           }
+        }
+      },
+      400: {
+        description: 'Invalid Request',
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number' },
+          error: { type: 'string' },
+          message: { type: 'string' }
+        }
+      },
+      500: {
+        description: 'Internal Server Error',
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number' },
+          error: { type: 'string' },
+          message: { type: 'string' }
         }
       }
     }
