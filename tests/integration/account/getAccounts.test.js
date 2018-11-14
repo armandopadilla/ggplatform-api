@@ -1,7 +1,7 @@
 const should = require('should');
 const supertest = require('supertest');
-const fastify = require('../../server');
-const { db: collection } = require('../../config');
+const fastify = require('../../../server');
+const { db: collection } = require('../../../config/index');
 
 describe ('Get Accounts', () => {
 

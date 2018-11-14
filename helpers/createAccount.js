@@ -1,5 +1,15 @@
 const hasEmailOrPhone = (email, phone) => (email || phone) ? true : false;
 
+const isEmailTaken = async (email, collectObj) => {
+  const record = await collectObj.findOne({ email });
+  return (record)? true : false;
+}
+
+const isUsernameTaken = async (username, collectObj) => {
+  const record = await collectObj.findOne({ username });
+  return (record) ? true : false;
+}
+
 const isValidAge = (dob) => {
   const ACCEPTABLE_AGE = 18;
   if (!dob) return false;
@@ -12,5 +22,7 @@ const isValidAge = (dob) => {
 
 module.exports = {
   hasEmailOrPhone,
-  isValidAge
+  isValidAge,
+  isEmailTaken,
+  isUsernameTaken
 }
