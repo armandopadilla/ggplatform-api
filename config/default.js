@@ -21,5 +21,14 @@ module.exports = {
   },
   server: {
     logger: true
+  },
+  aws: {
+    auth: {
+      ACCESS_KEY_ID: '',
+      SECRET_KEY: ''
+    },
+    ses: {
+      region: 'us-west-2'
+    }
   }
 };

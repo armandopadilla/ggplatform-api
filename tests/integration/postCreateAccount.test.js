@@ -10,7 +10,7 @@ describe ('Create Account', () => {
   let accountObj = {
     firstName: 'TEST_FIRST_NAME',
     username: 'TEST_USERNAME',
-    email: 'TEST@test.com',
+    email: 'mandopadilla81@gmail.com',
     password: 'TEST_PASSWORD',
     dob: '1981-03-10',
     acceptedTerms: 'yes',

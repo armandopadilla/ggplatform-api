@@ -72,7 +72,7 @@ const handler = async (req, res) => {
     const wallet = await createWallet(accountObj._id, db);
 
     // Send out welcome email - Could be async call
-    await sendWelcomeEmail(account);
+    await sendWelcomeEmail(email);
 
     // Compose the response
     const data = {
@@ -83,6 +83,7 @@ const handler = async (req, res) => {
     if (data) return response.success(data);
     return response.error();
   } catch (error) {
+    console.log(error);
     return response.error(error);
   }
 };
