@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.355.0",
     "bcryptjs": "^2.4.3",
     "boom": "^7.2.0",
     "fastify": "^1.11.1",

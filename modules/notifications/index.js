@@ -1,11 +1,54 @@
-// @todo
+const AWS = require('aws-sdk');
+const APP_FROM_EMAIL_ADDRESS = 'test@wiredpanda.com';
+const { aws } = require('../../config');
+
+
+
+/**
+ * Send push message
+ *
+ * @param text
+ */
 const sendPush = (text) => {
   // Grab the text
   // Do the push
 };
 
-const sendEmail = (subject, body, to) => {
 
+/**
+ * Send email
+ *
+ * @param subject
+ * @param body
+ * @param to
+ */
+const sendEmail = async (subject, body, to) => {
+  const ses = new AWS.SES({
+    accessKeyId: aws.auth.ACCESS_KEY_ID,
+    secretAccessKey: aws.auth.SECRET_KEY,
+    region: aws.ses.region
+  });
+
+  const params = {
+    Destination: {
+      ToAddresses: [to]
+    },
+    Message: {
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: body
+        }
+      },
+      Subject: {
+        Charset: "UTF-8",
+        Data: subject
+      }
+    },
+    Source: APP_FROM_EMAIL_ADDRESS,
+  };
+
+  return await ses.sendEmail(params).promise();
 };
 
 
