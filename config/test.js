@@ -2,7 +2,7 @@ const config = require('./default');
 
 config.db.connInfo = {
   forceClose: true,
-  url: 'mongodb://localhost:27017/phoenix',
+  url: 'mongodb://localhost:27017/gglol',
   useNewUrlParser: true,
 };
 

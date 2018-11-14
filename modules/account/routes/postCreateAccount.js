@@ -83,7 +83,6 @@ const handler = async (req, res) => {
     if (data) return response.success(data);
     return response.error();
   } catch (error) {
-    console.log(error);
     return response.error(error);
   }
 };
