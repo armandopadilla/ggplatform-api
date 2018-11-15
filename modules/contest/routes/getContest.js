@@ -4,7 +4,7 @@
  * Has basic info on the contest and participant count.
  * @todo  do we need a list of users in the contest?  I would think not?
  */
-const { ObjectID } = require('mongodb');
+const { ObjectId } = require('mongodb').ObjectID;
 const { response } = require('../../../utils');
 const { db: collection, errors } = require('../../../config');
 
@@ -12,14 +12,20 @@ const handler = async (req, res) => {
   const { contestId } = req.params;
   const { db } = res.context.config;
 
+  if (!ObjectId.isValid(contestId)) return response.error('Invalid Contest Id', 400);
+
   try {
     const contest = await db.collection(collection.CONTEST_NAME)
       .findOne(
-        { _id: ObjectID(contestId) },
+        { _id: ObjectId(contestId) },
       );
 
-    if (contest) return response.success(contest);
-    return response.error(errors.CONTEST_NOT_FOUND, 404);
+    if (!contest) return response.error(errors.CONTEST_NOT_FOUND, 404);
+
+    // Grab the bets
+    // @todo - link up with bets.
+    contest.bets = [];
+    return response.success(contest);
   } catch (error) {
     return response.error(error);
   }
@@ -52,8 +58,44 @@ module.exports = fastify => fastify.route({
               pot: { type: 'number', description: 'total amount in pot' },
               streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.' },
               status: { type: 'string', description: 'Contest status' },
+              bets: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    "_id": { type: 'string' }
+                  }
+                }
+              }
             }
           }
+        }
+      },
+      400: {
+        description: 'Invalid Contest Id',
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number' },
+          error: { type: 'string' },
+          message: { type: 'string' }
+        }
+      },
+      404: {
+        description: 'Contest not found',
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number' },
+          error: { type: 'string' },
+          message: { type: 'string' }
+        }
+      },
+      500: {
+        description: 'Internal Server Error',
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number' },
+          error: { type: 'string' },
+          message: { type: 'string' }
         }
       }
     }
