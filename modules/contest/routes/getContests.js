@@ -13,7 +13,9 @@ const handler = async (req, res) => {
     const contests = await db.collection(collection.CONTEST_NAME)
       .find({}).toArray();
 
-    return response.success(contests || []);
+    const total = contests.length;
+
+    return response.success(contests || [], total);
   } catch (error) {
     return response.error(error);
   }
@@ -34,7 +36,7 @@ module.exports = fastify => fastify.route({
         properties: {
           "data": {
             type: 'array',
-            items: [{
+            items: {
               type: 'object',
               properties: {
                 _id: {type: 'string'},
@@ -45,11 +47,26 @@ module.exports = fastify => fastify.route({
                 streamURL: {type: 'string', description: 'Streaming service URL. Used to stream video.'},
                 status: {type: 'string', description: 'Contest status'},
               }
-            }]
+            }
+          },
+          _meta: {
+            type: 'object',
+            properties: {
+              total: { type: 'number', description: 'Total number of records.' }
+            }
           }
         }
+      },
+      500: {
+        description: 'Internal Server Error',
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number' },
+          error: { type: 'string' },
+          message: { type: 'string' }
         }
       }
+    }
   },
   config: {
     db: fastify.mongo.db,
