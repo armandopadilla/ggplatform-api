@@ -92,9 +92,31 @@ Sign up page allows users...well...to sign up.  User must supply username, passw
 ### Screen
 ![sign up screen](docs/images/sign_up.png)
 
+### API To Use
+Account - POST /account (see API docs above)
+
+
+## Contest List
+### Overview
+List of contests the user can join/watch
+
+### Screen
+![list of contests screen](docs/images/list_of_contests.png)
 
 ### API To Use
-Account - Create Account (see API docs above)
+Contest - GET /contest/list (see API docs above)
+
+
+## Contest
+### Overview
+Contest Page. Contains detailed info of a contest. Bets, match info. etc.
+
+### Screen
+![contest screen](docs/images/contest_page.png)
+
+### API To Use
+Contest - GET /contest/{contestId} (see API docs above)
+
 
 
 # To Do

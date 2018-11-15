@@ -3,9 +3,10 @@ const supertest = require('supertest');
 const fastify = require('../../../server');
 const { db: collection } = require('../../../config/index');
 
-describe ('Get Contests', () => {
+describe ('Get Contest', () => {
 
   let db;
+  let contestId;
   let contestObj = {
     title: 'CONTEST',
     startDateTime: new Date(),
@@ -19,66 +20,50 @@ describe ('Get Contests', () => {
     await fastify.ready();
 
     db = fastify.mongo.db;
-
-    for(let i=0; i<12; i++){
-      const newContest = Object.assign({}, contestObj);
-      newContest.title = newContest.title+'_'+i;
-      await db.collection(collection.CONTEST_NAME).insertOne(newContest);
-    }
+    const contest =  await db.collection(collection.CONTEST_NAME).insertOne(contestObj);
+    contestId = contest.ops[0]._id;
   });
 
   after(async () => {
-    await db.collection(collection.CONTEST_NAME).deleteMany({});
+    await db.collection(collection.CONTEST_NAME).deleteMany({ });
   });
 
-  it('should return contests in correct response payload', async () => {
+  it('should return contest info with correct response payload', async () => {
     const response = await supertest(fastify.server)
-      .get('/contest/list')
+      .get(`/contest/${contestId}`)
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8');
 
-    // Check structure.
-    response.body.should.have.property('data').which.is.an.Array();
-    response.body.should.have.property('_meta');
-
-    // Check data properties
-    const data = response.body.data;
-
-    // Check the size
-    data.should.have.size(12);
-
-    // Check the first index has correct structure and data.
-    data[0].should.have.property('title', contestObj.title+'_0');
-    data[0].should.have.property('streamURL', contestObj.streamURL);
-    data[0].should.have.property('status', contestObj.status);
-    data[0].should.have.property('_id');
-    data[0].should.have.property('startDateTime');
-    data[0].should.have.property('endDateTime');
-    data[0].should.have.property('pot');
-
-
-    // Check _meta property (used in pagination)
-    const meta = response.body._meta;
-    meta.should.have.property('total', 12);
+    response.body.should.have.only.property('data');
+    response.body.data.should.have.property('title', contestObj.title);
+    response.body.data.should.have.property('startDateTime');
+    response.body.data.should.have.property('endDateTime');
+    response.body.data.should.have.property('pot', contestObj.pot);
+    response.body.data.should.have.property('streamURL', contestObj.streamURL);
+    response.body.data.should.have.property('status', contestObj.status);
+    response.body.data.should.have.property('_id');
   });
 
-  it('should return an empty array, no contests', async () => {
-    await db.collection(collection.CONTEST_NAME).deleteMany({});
-
+  it('should fail do to invalid id', async () => {
     const response = await supertest(fastify.server)
-      .get('/contest/list')
-      .expect(200)
+      .get(`/contest/123`)
+      .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8');
 
-    // Check data properties
-    const data = response.body.data;
+    response.body.should.have.property('statusCode', 400);
+    response.body.should.have.property('error', 'Bad Request');
+    response.body.should.have.property('message', 'Invalid Contest Id');
+  });
 
-    // Check the size
-    data.should.have.size(0);
+  it('should return 404, no contest found.', async () => {
+    const response = await supertest(fastify.server)
+      .get('/contest/53fbf4615c3b9f41c381b6a3')
+      .expect(404)
+      .expect('Content-Type', 'application/json; charset=utf-8');
 
-    // Check _meta property (used in pagination)
-    const meta = response.body._meta;
-    meta.should.have.property('total', 0);
-  })
+    response.body.should.have.property('statusCode', 404);
+    response.body.should.have.property('error', 'Not Found');
+    response.body.should.have.property('message', 'Contest not found');
+  });
 
 });
