@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/Wiredpanda/phoenix-apis.svg?branch=master)](https://travis-ci.com/Wiredpanda/phoenix-apis)
+[![Build Status](https://travis-ci.com/Wiredpanda/phoenix-apis.svg?token=UpH3DWqZkmkG5Zn9zgra&branch=master)](https://travis-ci.com/Wiredpanda/phoenix-apis)
 
 # Documentation
 Full API documentation can be found [here](http://gglol-docs.s3-website-us-west-1.amazonaws.com/)
