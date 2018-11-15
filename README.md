@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/Wiredpanda/phoenix-apis.svg?branch=master)](https://travis-ci.com/Wiredpanda/phoenix-apis)
 
 # Documentation
-Full API documentation can be found [here](http://gglol-docs.s3-website-us-west-1.amazonaws.com/|asdfa)
+Full API documentation can be found [here](http://gglol-docs.s3-website-us-west-1.amazonaws.com/)
 
 
 # Technology
@@ -85,6 +85,17 @@ Will not be triggered by a API call
 # General Flow
 Place the user flow designs here.  Outline how the FE works with the BE to do specific things
 
+## Sign Up
+### Overview
+Sign up page allows users...well...to sign up.  User must supply username, password, and an email or phone number.
+
+### Screen
+![sign up screen]('./docs/images/sign_up.png')
+
+
+### API To Use
+Account - Create Account (see API docs above)
+
 
 # To Do
 ## Admin Tool
@@ -95,10 +106,8 @@ Place the user flow designs here.  Outline how the FE works with the BE to do sp
 1. ACLs
 1. Unit Tests
 1. Integration Tests
-1. Notifications Service
 1. Event Logger
 1. Stripe integration
-1. Set up Travis
 1. Set up Infra (AWS Lambda, ec2 with mongos, elastic cache redis, api gateway)
 1. DB - Mongo -> DynamoDB
 1. Cache - Redis
