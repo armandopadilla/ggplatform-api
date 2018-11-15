@@ -90,7 +90,7 @@ Place the user flow designs here.  Outline how the FE works with the BE to do sp
 Sign up page allows users...well...to sign up.  User must supply username, password, and an email or phone number.
 
 ### Screen
-![sign up screen]('./docs/images/sign_up.png')
+![sign up screen](docs/images/sign_up.png)
 
 
 ### API To Use
