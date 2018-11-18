@@ -68,7 +68,7 @@ module.exports = fastify => fastify.route({
     description: 'Update a specific account.',
     summary: 'Update account',
     params: {
-      accountId: { type: 'string', description: 'Unique account Id.' },
+      accountId: { type: 'string', description: 'Unique account Id.' }
     },
     body: {
       type: 'object',
@@ -78,7 +78,6 @@ module.exports = fastify => fastify.route({
         email: { type: 'string', description: 'New email for account.', format: 'email' }
       },
     },
-    required: ['accountId'],
     response: {
       200: {
         description: 'Successful response',

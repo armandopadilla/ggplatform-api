@@ -13,7 +13,8 @@ describe ('Create Contest', () => {
     endDateTime: new Date(),
     pot: 0,
     streamURL: 'https://www.twitch.tv/riotgames',
-    status: 'active'
+    status: 'active',
+    entryFee: 35
   };
 
   before( async () => {
@@ -41,6 +42,7 @@ describe ('Create Contest', () => {
     data.should.have.property('pot', contestObj.pot);
     data.should.have.property('streamURL', contestObj.streamURL);
     data.should.have.property('status', contestObj.status);
+    data.should.have.property('entryFee', contestObj.entryFee);
     data.should.have.property('_id');
   });
 
@@ -72,6 +74,13 @@ describe ('Create Contest', () => {
 
     response = await supertest(fastify.server).post('/contest').send(obj).expect(400);
     response.body.message.should.equal('body should have required property \'streamURL\'');
+
+    // Missing entryFee
+    obj = Object.assign({}, contestObj);
+    delete obj.entryFee;
+
+    response = await supertest(fastify.server).post('/contest').send(obj).expect(400);
+    response.body.message.should.equal('body should have required property \'entryFee\'');
   });
 
 });

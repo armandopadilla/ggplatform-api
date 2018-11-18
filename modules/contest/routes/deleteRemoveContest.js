@@ -39,7 +39,6 @@ module.exports = fastify => fastify.route({
     params: {
       contestId: { type: 'string', description: 'Unique contest id' }
     },
-    required: ['contestId'],
     response: {
       200: {
         description: 'Successful response',

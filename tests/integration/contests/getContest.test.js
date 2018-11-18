@@ -13,7 +13,8 @@ describe ('Get Contest', () => {
     endDateTime: new Date(),
     pot: 0,
     streamURL: 'https://www.twitch.tv/riotgames',
-    status: 'active'
+    status: 'active',
+    entryFee: 35
   };
 
   before( async () => {

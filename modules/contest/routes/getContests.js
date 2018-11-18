@@ -46,6 +46,7 @@ module.exports = fastify => fastify.route({
                 pot: {type: 'number', description: 'total amount in pot'},
                 streamURL: {type: 'string', description: 'Streaming service URL. Used to stream video.'},
                 status: {type: 'string', description: 'Contest status'},
+                entryFee: { type: 'number', description: 'Cost to enter the contest' }
               }
             }
           },

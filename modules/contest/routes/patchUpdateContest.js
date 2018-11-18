@@ -19,6 +19,7 @@ const handler = async (req, res) => {
     endDateTime,
     streamURL,
     status,
+    entryFee
   } = req.body;
 
   const updateObj = {
@@ -27,6 +28,7 @@ const handler = async (req, res) => {
     endDateTime,
     streamURL,
     status,
+    entryFee
   };
 
   if (!ObjectID.isValid(contestId)) return response.error('Invalid Contest Id', 400);
@@ -62,8 +64,9 @@ module.exports = fastify => fastify.route({
         endDateTime: { type: 'string', format: 'date-time', description: 'End date time of contest' },
         streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.', format: 'url' },
         status: { type: 'string', description: 'Contest status', enum: ['active', 'pending', 'in_progress', 'distributing_pot', 'paused', 'completed' ] },
+        entryFee: { type: 'number', description: 'Cost to enter the contest' }
       },
-      required: ['title', 'startDateTime', 'endDateTime', 'streamURL'],
+      required: ['title', 'startDateTime', 'endDateTime', 'streamURL', 'entryFee']
     },
     params: {
       contestId: { type: 'string', description: 'Unique contest id.' },
@@ -81,6 +84,7 @@ module.exports = fastify => fastify.route({
               endDateTime: { type: 'string', format: 'date-time', description: 'End date time of contest' },
               streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.' },
               status: { type: 'string', description: 'Contest status', enum: ['active', 'pending', 'in_progress', 'distributing_pot', 'paused', 'completed' ] },
+              entryFee: { type: 'number', description: 'Cost to enter the contest' }
             }
           }
         }

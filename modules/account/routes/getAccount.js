@@ -36,7 +36,6 @@ module.exports = fastify => fastify.route({
     params: {
       accountId: { type: 'string', description: 'Unique account Id.' }
     },
-    required: ['accountId'],
     response: {
       200: {
         description: 'Successful response',
