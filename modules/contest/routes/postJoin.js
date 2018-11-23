@@ -48,6 +48,13 @@ const handler = async (req, res) => {
 
       if (data.matchedCount) {
         await withdraw(userId, contest.entryFee, db);
+
+        // Update the pot
+        const newPot = contest.pot + contest.entryFee;
+        await db.collection(collection.CONTEST_NAME).updateOne({
+          _id: ObjectId(contestId)
+        }, { $set: { pot: newPot } })
+
         return response.success({});
       }
     } else {

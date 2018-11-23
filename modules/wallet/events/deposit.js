@@ -6,11 +6,10 @@ const { db: collection } = require('../../../config');
  *
  * @param accountId
  * @param amount
- * @param fastify
+ * @param db
  * @returns {Promise.<*>}
  */
-const deposit = async (accountId, amount, fastify) => {
-  const { db } = fastify.mongo.db;
+const deposit = async (accountId, amount, db) => {
   if (!accountId) throw new Error('accountId can not be empty');
   if (!amount) throw new Error('amount must be a value greater than 0.00');
 
@@ -19,7 +18,7 @@ const deposit = async (accountId, amount, fastify) => {
   });
 
   const newBalance = parseFloat(wallet.balance + amount);
-  const updatedWallet = await db.collection(collection.WALLET_NAME).update(
+  const updatedWallet = await db.collection(collection.WALLET_NAME).updateOne(
     { ownerId: ObjectID(accountId) },
     { $set: { balance: newBalance } },
   );
