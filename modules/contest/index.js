@@ -2,6 +2,7 @@
  * Contest functionality
  *
  */
+const getMyContests = require('./routes/getMyContests');
 const getContest = require('./routes/getContest');
 const getContests = require('./routes/getContests');
 const postCreateContest = require('./routes/postCreateContest');
@@ -11,6 +12,9 @@ const postJoin = require('./routes/postJoin');
 const postLeave = require('./routes/postLeave');
 
 module.exports = (fastify, opt, next) => {
+  // GET - /contest/my-contests
+  getMyContests(fastify);
+
   // GET - /contest/:contestId
   getContest(fastify);
 
@@ -34,6 +38,7 @@ module.exports = (fastify, opt, next) => {
 
   next();
 };
+
 
 /**
  Let me see all the available contests I can place a waiger on.
