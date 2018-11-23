@@ -20,7 +20,7 @@ const handler = async (req, res) => {
       _id: ObjectId(userId)
     });
 
-    if(!user) return response.error('Account not found.', 400);
+    if(!user) return response.error('Account not found.', 404);
 
     // Wondering if this is better than updating a "contests" list held onto
     // the account object.
@@ -43,8 +43,11 @@ module.exports = fastify => fastify.route({
   handler,
   schema: {
     tags: ['Contest'],
-    description: 'Fetch all the contests a specific user is in.',
+    description: 'Fetch all the contests a specific user.',
     summary: 'Fetch user contests',
+    querystring: {
+      userId: { type: "string", description: "Unique account Id." }
+    },
     response: {
       200: {
         description: 'Successful response',
@@ -72,6 +75,24 @@ module.exports = fastify => fastify.route({
               total: { type: 'number', description: 'Total number of records.' }
             }
           }
+        }
+      },
+      400: {
+        description: 'Bad Request',
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number' },
+          error: { type: 'string' },
+          message: { type: 'string' }
+        }
+      },
+      404: {
+        description: 'Not Found',
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number' },
+          error: { type: 'string' },
+          message: { type: 'string' }
         }
       },
       500: {

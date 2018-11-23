@@ -63,11 +63,11 @@ describe ('Get My Contests', () => {
   it('should fail do to account not found.', async () => {
     const response = await supertest(fastify.server)
       .get(`/contest/my-contests?userId=53fbf4615c3b9f41c381b6a3`)
-      .expect(400)
+      .expect(404)
       .expect('Content-Type', 'application/json; charset=utf-8');
 
-    response.body.should.have.property('statusCode', 400);
-    response.body.should.have.property('error', 'Bad Request');
+    response.body.should.have.property('statusCode', 404);
+    response.body.should.have.property('error', 'Not Found');
     response.body.should.have.property('message', 'Account not found.');
   });
 
