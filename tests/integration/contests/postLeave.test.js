@@ -4,7 +4,7 @@ const supertest = require('supertest');
 const fastify = require('../../../server');
 const { db: collection } = require('../../../config/index');
 
-describe ('Join Contest', () => {
+describe ('Leave Contest', () => {
 
   let db;
   let contestId;
@@ -61,10 +61,10 @@ describe ('Join Contest', () => {
   });
 
   it ('should fail required parameters not present.', async () => {
-   const response = await supertest(fastify.server)
-     .post(`/contest/${contestId}/join`)
-     .send({})
-     .expect(400);
+    const response = await supertest(fastify.server)
+      .post(`/contest/${contestId}/leave`)
+      .send({})
+      .expect(400);
 
     response.body.message.should.equal('body should have required property \'userId\'');
   });
@@ -72,7 +72,7 @@ describe ('Join Contest', () => {
 
   it ('should fail, Invalid Contest Id.', async () => {
     const response = await supertest(fastify.server)
-      .post('/contest/12313/join')
+      .post('/contest/12313/leave')
       .send({
         userId: '123123123'
       })
@@ -83,7 +83,7 @@ describe ('Join Contest', () => {
 
   it ('should fail, Invalid User Id.', async () => {
     const response = await supertest(fastify.server)
-      .post(`/contest/${contestId}/join`)
+      .post(`/contest/${contestId}/leave`)
       .send({
         userId: '123123'
       })
@@ -94,7 +94,7 @@ describe ('Join Contest', () => {
 
   it ('should fail, contest is not found.', async () => {
     const response = await supertest(fastify.server)
-      .post(`/contest/5bf1d4c5f5149a1fb4f8a3ff/join`)
+      .post(`/contest/5bf1d4c5f5149a1fb4f8a3ff/leave`)
       .send({
         userId: accountId
       })
@@ -103,94 +103,57 @@ describe ('Join Contest', () => {
     response.body.message.should.equal('Contest not found');
   });
 
-  it ('should fail, user already in the contest.', async () => {
-    // Add the user to the contest
-    await db.collection(collection.CONTEST_NAME).updateOne(
-      { _id: ObjectId(contestId) },
-      { $addToSet: { participants: accountId.toString() } },
-    );
-
+  it ('should fail, contest is not found.', async () => {
     const response = await supertest(fastify.server)
-      .post(`/contest/${contestId}/join`)
+      .post(`/contest/${contestId}/leave`)
       .send({
-        userId: accountId
+        userId: '5bf1d4c5f5149a1fb4f8a3ff'
       })
-      .expect(400);
+      .expect(404);
 
-    response.body.message.should.equal('User already a participant');
+    response.body.message.should.equal('Account not found');
   });
 
-  it ('should fail, user doesnt have enough funds', async () => {
-    await db.collection(collection.WALLET_NAME).updateOne(
-      { _id: ObjectId(walletId) },
-      { $set: { balance: 10.00 } },
-    );
 
-    const response = await supertest(fastify.server)
-      .post(`/contest/${contestId}/join`)
-      .send({
-        userId: accountId
-      })
-      .expect(400);
-
-    response.body.message.should.equal('Not enough funds');
-  });
-
-  it ('should pass, user has equal funds', async () => {
-    await db.collection(collection.WALLET_NAME).updateOne(
-      { _id: ObjectId(walletId) },
-      { $set: { balance: 35.00 } },
-    );
-
-    const response = await supertest(fastify.server)
+  it ('should pass, successfully credit the wallet and deduct from pot.', async () => {
+    // Join the Contest
+    let response = await supertest(fastify.server)
       .post(`/contest/${contestId}/join`)
       .send({
         userId: accountId
       })
       .expect(200);
 
-    response.body.should.have.only.property('data');
-    response.body.should.be.a.Object();
-  });
-
-  it ('should pass, user has more than the min funds', async () => {
-    await db.collection(collection.WALLET_NAME).updateOne(
-      { _id: ObjectId(walletId) },
-      { $set: { balance: 100.00 } },
-    );
-
-    const response = await supertest(fastify.server)
-      .post(`/contest/${contestId}/join`)
-      .send({
-        userId: accountId
-      })
-      .expect(200);
-
-    response.body.should.have.only.property('data');
-    response.body.should.be.a.Object();
-  });
-
-  it ('should pass, user joins, check wallet is deducted the right amount', async () => {
-    // Update the wallet to 30.
-    await db.collection(collection.WALLET_NAME).updateOne(
-      { _id: ObjectId(walletId) },
-      { $set: { balance: 100.00 } },
-    );
-
-    const response = await supertest(fastify.server)
-      .post(`/contest/${contestId}/join`)
-      .send({
-        userId: accountId
-      })
-      .expect(200);
-
-    // Check the wallet
-    const wallet = await db.collection(collection.WALLET_NAME).findOne({
-      _id: walletId
+    // Check the Pot, wallet
+    let wallet = await db.collection(collection.WALLET_NAME).findOne({
+      ownerId: ObjectId(accountId)
     });
 
-    const balance = wallet.balance;
+    let contest = await db.collection(collection.CONTEST_NAME).findOne({
+      _id: ObjectId(contestId)
+    });
 
-    (100 - contestObj.entryFee).should.be.equal(balance);
+    wallet.balance.should.be.equal(walletObj.balance - contestObj.entryFee);
+    contest.pot.should.be.equal(contestObj.entryFee);
+
+    response = await supertest(fastify.server)
+      .post(`/contest/${contestId}/leave`)
+      .send({
+        userId: accountId
+      })
+      .expect(200);
+
+    // Check if the wallet and pots were updated
+    // Check the Pot, wallet
+    wallet = await db.collection(collection.WALLET_NAME).findOne({
+      ownerId: ObjectId(accountId)
+    });
+
+    contest = await db.collection(collection.CONTEST_NAME).findOne({
+      _id: ObjectId(contestId)
+    });
+
+    wallet.balance.should.be.equal(walletObj.balance);
+    contest.pot.should.be.equal(0);
   });
 });
