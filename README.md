@@ -118,6 +118,17 @@ Contest Page. Contains detailed info of a contest. Bets, match info. etc.
 Contest - GET /contest/{contestId} (see API docs above)
 
 
+## My Contests
+### Overview
+List of contests a specific user is in.
+
+### Screen
+![contest screen](docs/images/my_contests.png)
+
+### API To Use
+Contest - GET /contest/my-contests (see API docs above)
+
+
 
 # To Do
 ## Admin Tool
