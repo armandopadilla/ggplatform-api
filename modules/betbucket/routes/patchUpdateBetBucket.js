@@ -18,7 +18,7 @@ const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
-  const { contestId } = req.params;
+  const { contestId, betBucketId } = req.params;
   const { db } = res.context.config;
   const {
     title,
@@ -30,46 +30,57 @@ const handler = async (req, res) => {
   // Check if the contestId is valid
   if (!ObjectId.isValid(contestId)) return response.error('Invalid Contest Id.', 400);
 
-  // Check the contest exists
+  // Check the contest and bet bucket exists
   try {
-    const _id = ObjectId(contestId);
-    const contest = await db.collection(collection.CONTEST_NAME).findOne({ _id });
-
+    const contest = await db.collection(collection.CONTEST_NAME).findOne({
+      _id: ObjectId(contestId)
+    });
     if (!contest) return response.error('No Contest Found.', 404);
 
-    // @todo Check if the user can do take this action.
 
-    const betBucketObj = {
+    const betBucket = await db.collection(collection.BETBUCKET_NAME).findOne(
+      { _id: ObjectId(betBucketId) }
+    );
+    if (!bucket) return response.error('Bet Bucket not found', 404);
+
+    const updateObj = {
       title,
       description,
       minEntryFee,
-      contestId,
-      status: status || 'pending',
+      status,
       participants: [],
-      createdDateTime: new Date(),
       updatedDateTime: new Date()
     };
 
-    const betBucket = await db.collection(collection.BETBUCKET_NAME).insertOne(betBucketObj);
-    if (betBucket) return response.success(betBucket);
+    const betBucket = await db.collection(collection.BETBUCKET_NAME).updateOne(
+      { _id: ObjectId(betBucketId) },
+      { $set: updateObj }
+    );
+
+    if (data.matchedCount) return response.success(update);
     return response.error('Could not add betbucket.', 400);
   } catch (e) {
+    console.log(e);
     return response.error(e);
   }
 };
 
 module.exports = fastify => fastify.route({
-  method: 'POST',
-  url: '/',
+  method: 'PATCH',
+  url: '/:betBucketId',
   handler,
   schema: {
     tags: ['Bet'],
-    description: 'Create a new "bet bucket" within an existing contest',
-    summary: 'Create a "bet bucket"',
+    description: 'Update a "bet bucket" within an existing contest',
+    summary: 'Update a "bet bucket"',
     params: {
       contestId: {
         type: "string",
         description: "Unique contest Id."
+      },
+      betBucketId: {
+        type: "string",
+        description: "Unique bet bucket Id."
       }
     },
     body: {

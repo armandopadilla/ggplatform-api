@@ -5,7 +5,7 @@ module.exports = (fastify, opts, next) => {
   // POST - /contest/:contestId/betbucket
   postCreateBucket(fastify);
 
-  // @see /contest/:contestId
+  // GET - /contest/:contestId/betbucket/list
   getContestBetBuckets(fastify);
 
   next();

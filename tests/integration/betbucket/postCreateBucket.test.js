@@ -1,5 +1,6 @@
 const should = require('should');
 const supertest = require('supertest');
+const ObjectId = require('mongodb').ObjectId;
 const fastify = require('../../../server');
 const { db: collection } = require('../../../config/index');
 
@@ -14,8 +15,7 @@ describe ('Create Bet Bucket', () => {
     pot: 0,
     streamURL: 'https://www.twitch.tv/riotgames',
     status: 'active',
-    entryFee: 35,
-    betBuckets: []
+    entryFee: 35
   };
   let betBucketObj = {
     title: 'TEST BUCKET TITLE',
@@ -33,6 +33,7 @@ describe ('Create Bet Bucket', () => {
 
   after(async () => {
     await db.collection(collection.CONTEST_NAME).deleteMany({ });
+    await db.collection(collection.BETBUCKET_NAME).deleteMany({ });
   });
 
   it ('should fail when required parameters are not present.', async () => {
@@ -79,7 +80,7 @@ describe ('Create Bet Bucket', () => {
     response.body.message.should.equal('No Contest Found.');
   });
 
-  it('should successfully add 2 bet buckets into a contest.', async () => {
+  it('should successfully add 1 bet buckets into a contest.', async () => {
     let response = await supertest(fastify.server)
       .post(`/contest/${contestId}/betbucket`)
       .send(betBucketObj)
@@ -90,20 +91,11 @@ describe ('Create Bet Bucket', () => {
     response.body.data.should.be.an.Object();
 
     // Check of the contest not has the property on the response.
-    response = await supertest(fastify.server)
-      .get(`/contest/${contestId}`)
-      .expect(200)
-      .expect('Content-Type', 'application/json; charset=utf-8');
+    const betBuckets = await db.collection(collection.BETBUCKET_NAME).find({
+      contestId: contestId.toString()
+    }).toArray();
 
-    response.body.should.have.only.property('data');
-    const data = response.body.data;
-    data.should.have.property('betBuckets');
-    data.betBuckets.should.have.size(1);
-
-    const bucket = data.betBuckets[0];
-    bucket.should.have.property('title', betBucketObj.title);
-    bucket.should.have.property('description', betBucketObj.description);
-    bucket.should.have.property('minEntryFee', betBucketObj.minEntryFee);
+    betBuckets.should.have.size(1);
   });
 
 });

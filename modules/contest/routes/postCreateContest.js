@@ -27,8 +27,7 @@ const handler = async (req, res) => {
     streamURL,
     status,
     participants: [], // Initially empty
-    entryFee,
-    betBuckets: [] // Contains all the bets within this contest.
+    entryFee
   };
 
   try {
