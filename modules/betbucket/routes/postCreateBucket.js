@@ -23,7 +23,8 @@ const handler = async (req, res) => {
   const {
     title,
     description,
-    minEntryFee
+    minEntryFee,
+    status,
   } = req.body;
 
   // Check if the contestId is valid
@@ -44,6 +45,7 @@ const handler = async (req, res) => {
       title,
       description,
       minEntryFee,
+      status: status || 'pending',
       participants: [],
       createdDateTime: new Date(),
       updatedDateTime: new Date()
@@ -82,7 +84,8 @@ module.exports = fastify => fastify.route({
       properties: {
         title: { type: "string", description: "Bet Bucket title.  What is shown to the user." },
         description: { type: "string", description: "Short description of the bet bucket.  Shown to the user." },
-        minEntryFee: { type: "number", description: "Minimum entry fee.", min: 1 }
+        minEntryFee: { type: "number", description: "Minimum entry fee.", min: 1 },
+        status: { type: 'string', enum: ['open', 'closed', 'paused', 'distributing', 'finished'] }
       },
       required: ['title', 'description', 'minEntryFee']
     },
