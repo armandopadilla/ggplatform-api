@@ -16,7 +16,7 @@ const handler = async (req, res) => {
     pot,
     streamURL,
     status,
-    entryFee,
+    entryFee
   } = req.body;
 
   const insertObj = {
@@ -27,7 +27,8 @@ const handler = async (req, res) => {
     streamURL,
     status,
     participants: [], // Initially empty
-    entryFee
+    entryFee,
+    betBuckets: [] // Contains all the bets within this contest.
   };
 
   try {

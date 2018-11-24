@@ -1,0 +1,11 @@
+{
+  betbuckets: [{
+  _id,
+  title,
+  enterFee,
+  createdDate,
+  updatedDate,
+  participants: [],
+  pot:
+  }]
+}
