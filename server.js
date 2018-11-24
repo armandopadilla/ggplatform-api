@@ -47,6 +47,7 @@ fastify.register(require('./modules/account'), { prefix: '/account' });
 fastify.register(require('./modules/contest'), { prefix: '/contest' });
 fastify.register(require('./modules/auth'), { prefix: '/auth' });
 fastify.register(require('./modules/wallet'), { prefix: '/wallet' });
+fastify.register(require('./modules/betbucket'), { prefix: '/contest/:contestId/betbucket' });
 
 const start = async () => {
   try {
