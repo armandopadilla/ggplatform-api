@@ -1,7 +1,13 @@
 const postCreateBucket = require('./routes/postCreateBucket');
+const getContestBetBuckets = require('./routes/getContestBetBuckets');
 
 module.exports = (fastify, opts, next) => {
+  // POST - /contest/:contestId/betbucket
   postCreateBucket(fastify);
+
+  // @see /contest/:contestId
+  getContestBetBuckets(fastify);
+
   next();
 };
 
