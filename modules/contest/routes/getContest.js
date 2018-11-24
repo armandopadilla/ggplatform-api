@@ -65,7 +65,8 @@ module.exports = fastify => fastify.route({
                   properties: {
                     title: { type: "string", description: "Bet Bucket title.  What is shown to the user." },
                     description: { type: "string", description: "Short description of the bet bucket.  Shown to the user." },
-                    minEntryFee: { type: "number", description: "Minimum entry fee.", min: 1 }
+                    minEntryFee: { type: "number", description: "Minimum entry fee.", min: 1 },
+                    status: { type: 'string' }
                   }
                 },
                 description: 'All possible bets a user can make for this contest.'
