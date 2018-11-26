@@ -10,7 +10,14 @@ const handler = async (req, res) => {
   const { db } = res.context.config;
   const { contestId } = req.params;
 
+  // Check if the contestId is valid
+  if (!ObjectId.isValid(contestId)) return response.error('Invalid Contest Id.', 400);
+
   try {
+    const contest = await db.collection(collection.CONTEST_NAME).findOne({ _id: ObjectId(contestId) });
+
+    if (!contest) return response.error('No Contest Found.', 404);
+
     const betBuckets = await db.collection(collection.BETBUCKET_NAME)
       .find({ contestId: ObjectId(contestId) })
       .toArray();
@@ -19,6 +26,7 @@ const handler = async (req, res) => {
 
     return response.success(betBuckets || [], total);
   } catch (error) {
+    console.log(error);
     return response.error(error);
   }
 };

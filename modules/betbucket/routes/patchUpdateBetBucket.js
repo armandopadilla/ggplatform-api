@@ -1,34 +1,34 @@
 /**
- * Add a bucket into a contest
- *
- * What is a bet bucket?  Well...each contests can have many side bets.
- * Who will get first blood
- * Who will get a penta kill
- * Who ...
- * Those are bet buckets since a user can place X into it.
- *
- * @todo Security - Only admin can do this.
- *
- * @param req
- * @param res
+ * Update a specific bucket
  */
 
 const ObjectId = require('mongodb').ObjectId;
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
+/**
+ * Build an object based off the params that were actually sent.
+ *
+ * @param req
+ * @returns {{}}
+ */
+const getUpdateObj = (params) => {
+  const obj = {};
+  Object.keys(params).forEach((key) => {
+    obj[key] = params[key]
+  });
+
+  obj.updatedDateTime = new Date();
+  return obj;
+};
+
 const handler = async (req, res) => {
   const { contestId, betBucketId } = req.params;
   const { db } = res.context.config;
-  const {
-    title,
-    description,
-    minEntryFee,
-    status,
-  } = req.body;
 
   // Check if the contestId is valid
   if (!ObjectId.isValid(contestId)) return response.error('Invalid Contest Id.', 400);
+  if (!ObjectId.isValid(betBucketId)) return response.error('Invalid Bet Bucket Id.', 400);
 
   // Check the contest and bet bucket exists
   try {
@@ -37,30 +37,22 @@ const handler = async (req, res) => {
     });
     if (!contest) return response.error('No Contest Found.', 404);
 
-
     const betBucket = await db.collection(collection.BETBUCKET_NAME).findOne(
       { _id: ObjectId(betBucketId) }
     );
-    if (!bucket) return response.error('Bet Bucket not found', 404);
+    if (!betBucket) return response.error('No bet bucket found.', 404);
 
-    const updateObj = {
-      title,
-      description,
-      minEntryFee,
-      status,
-      participants: [],
-      updatedDateTime: new Date()
-    };
+    const updateObj = getUpdateObj(req.body);
+    console.log(updateObj);
 
-    const betBucket = await db.collection(collection.BETBUCKET_NAME).updateOne(
+    const updateData = await db.collection(collection.BETBUCKET_NAME).updateOne(
       { _id: ObjectId(betBucketId) },
       { $set: updateObj }
     );
 
-    if (data.matchedCount) return response.success(update);
-    return response.error('Could not add betbucket.', 400);
+    if (updateData.matchedCount) return response.success(updateData);
+    return response.error('Could not update betbucket.', 400);
   } catch (e) {
-    console.log(e);
     return response.error(e);
   }
 };
@@ -90,8 +82,7 @@ module.exports = fastify => fastify.route({
         description: { type: "string", description: "Short description of the bet bucket.  Shown to the user." },
         minEntryFee: { type: "number", description: "Minimum entry fee.", min: 1 },
         status: { type: 'string', enum: ['open', 'closed', 'paused', 'distributing', 'finished'] }
-      },
-      required: ['title', 'description', 'minEntryFee']
+      }
     },
     response: {
       200: {
