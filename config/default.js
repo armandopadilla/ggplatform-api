@@ -9,6 +9,7 @@ module.exports = {
     WALLET_NAME: 'wallets',
     EVENTLOGGER__NAME: 'event_logger',
     CONTEST_NAME: 'contests',
+    BETBUCKET_NAME: 'betbuckets'
   },
   errors: {
     ACCOUNT_NOT_FOUND: 'Account not found',

@@ -57,21 +57,7 @@ module.exports = fastify => fastify.route({
               pot: { type: 'number', description: 'total amount in pot' },
               streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.' },
               status: { type: 'string', description: 'Contest status' },
-              entryFee: { type: 'number', description: 'Cost to enter the contest' },
-              betBuckets: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    title: { type: "string", description: "Bet Bucket title.  What is shown to the user." },
-                    description: { type: "string", description: "Short description of the bet bucket.  Shown to the user." },
-                    minEntryFee: { type: "number", description: "Minimum entry fee.", min: 1 },
-                    status: { type: 'string' }
-                  }
-                },
-                description: 'All possible bets a user can make for this contest.'
-              },
-
+              entryFee: { type: 'number', description: 'Cost to enter the contest' }
             }
           }
         }
