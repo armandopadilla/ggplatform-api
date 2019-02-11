@@ -43,8 +43,8 @@ fastify.register(require('fastify-swagger'), {
 });
 
 // Register all endpoints
-fastify.register(require('./modules/account'), { prefix: '/account' });
-fastify.register(require('./modules/contest'), { prefix: '/contest' });
+fastify.register(require('./modules/user'), { prefix: '/user' });
+fastify.register(require('./modules/game'), { prefix: '/game' });
 fastify.register(require('./modules/auth'), { prefix: '/auth' });
 fastify.register(require('./modules/wallet'), { prefix: '/wallet' });
 fastify.register(require('./modules/betbucket'), { prefix: '/contest/:contestId/betbucket' });

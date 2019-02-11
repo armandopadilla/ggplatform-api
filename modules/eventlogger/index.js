@@ -3,7 +3,7 @@
  */
 const { db: collection } = require('../../config');
 
-const validProperties = ['eventType', 'accountId', 'dateTime', 'description'];
+const validProperties = ['eventType', 'userId', 'accountId', 'dateTime', 'description'];
 
 const logEvent = async (payload, fastify) => {
   const { db } = fastify.mongo.db;
@@ -13,7 +13,7 @@ const logEvent = async (payload, fastify) => {
     if (!validProperties.indexOf(key)) return false;
   });
 
-  await db.collection(collection.EVENTLOGGER__NAME).insertOne(payload);
+  await db.collection(collection.EVENTLOGGER_COLL_NAME).insertOne(payload);
   return payload;
 };
 

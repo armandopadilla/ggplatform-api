@@ -2,8 +2,13 @@ const getWallets = require('./routes/getWallets');
 const getWallet = require('./routes/getWallet');
 
 module.exports = (fastify, opts, next) => {
+
+  // GET - /wallet/list
   getWallets(fastify);
+
+  // GET - /wallet/:walletId
   getWallet(fastify);
+
   next();
 };
 

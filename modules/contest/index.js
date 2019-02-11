@@ -1,52 +1,40 @@
-/**
- * Contest functionality
- *
- */
-const getMyContests = require('./routes/getMyContests');
-const getContest = require('./routes/getContest');
-const getContests = require('./routes/getContests');
-const postCreateContest = require('./routes/postCreateContest');
-const patchUpdateContest = require('./routes/patchUpdateContest');
-const deleteRemoveContest = require('./routes/deleteRemoveContest');
-const postJoin = require('./routes/postJoin');
-const postLeave = require('./routes/postLeave');
+const postCreateBucket = require('./routes/postCreateBucket');
+const getContestBetBuckets = require('./routes/getContestBetBuckets');
+const patchUpdateBetBucket = require('./routes/patchUpdateBetBucket');
 
-module.exports = (fastify, opt, next) => {
-  // GET - /contest/my-contests
-  getMyContests(fastify);
+module.exports = (fastify, opts, next) => {
+  // POST - /contest/:contestId/betbucket
+  postCreateBucket(fastify);
 
-  // GET - /contest/:contestId
-  getContest(fastify);
+  // GET - /contest/:contestId/betbucket/list
+  getContestBetBuckets(fastify);
 
-  // GET - /contest/list
-  getContests(fastify);
-
-  // POST - /contest
-  postCreateContest(fastify);
-
-  // PATCH - /contest/:contestId
-  patchUpdateContest(fastify);
-
-  // DELETE - /contest/:contestId
-  deleteRemoveContest(fastify);
-
-  // POST - /contest/:contestId/join
-  postJoin(fastify);
-
-  // POST - /contest/:contestId/leave
-  postLeave(fastify);
+  // PATCH - /contest/:contestId/betbucket/:betBucketId
+  patchUpdateBetBucket(fastify);
 
   next();
 };
 
 
-/**
- Let me see all the available contests I can place a waiger on.
- User fetches all contests that have not completed
+/*
+ // Betting
+ // Add to the pot
+ // Fetch the wallet
+ // Fetch the entry fee
+ // Withdraw funds from wallet
+ // Enter the user into the contest
+ // Payout the pot
+ // Grab all the participants that won in a specific contest
+ // Break up the pot into (number of participants that won)
+ // Foreach participant that won
+ // Deposit the funds
+ // Sendout a notification that they won X
+ */
 
- As a System, let me update each contest
- As a System, let me grab all the 'end' state contests and dispurse pot.
- Place the contest in 'pot_dispursement_in_progress'
- As a System, let me grab all 'pot_dispursement_in_progress_completed'
- to 'completed
-*/
+
+// Create bet
+// Create the bet in its own collection
+// Store the bet buckets in the contest
+//
+
+// I think this is OK because I cant see a contests having hundres of bet buckets

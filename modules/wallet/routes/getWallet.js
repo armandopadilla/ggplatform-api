@@ -11,7 +11,7 @@ const handler = async (req, res) => {
   const { db } = res.context.config;
   const { walletId } = req.params;
 
-  const wallet = await db.collection(collection.WALLET_NAME).findOne({
+  const wallet = await db.collection(collection.WALLET_COLL_NAME).findOne({
     _id: ObjectID(walletId),
   });
 
@@ -40,7 +40,7 @@ module.exports = fastify => fastify.route({
             type: 'object',
             properties: {
               ownerId: { type: 'string', description: 'Unique owner id.' },
-              balance: { type: 'number', description: 'Current ballance in this wallet.' },
+              balance: { type: 'number', description: 'Current balance in this wallet.' },
               currency: { type: 'string', description: 'Currency type.' },
               createdDate: { type: 'string', format: 'date-time', description: 'Date Time of wallet creation.' },
               updateDate: { type: 'string', format: 'date-time', description: 'Date Time of wallet last update.' }
