@@ -1,6 +1,8 @@
 const AWS = require('aws-sdk');
-const APP_FROM_EMAIL_ADDRESS = 'test@wiredpanda.com';
-const { aws } = require('../../config');
+const {
+  aws,
+  company,
+} = require('../../config');
 
 
 
@@ -45,7 +47,7 @@ const sendEmail = async (subject, body, to) => {
         Data: subject
       }
     },
-    Source: APP_FROM_EMAIL_ADDRESS,
+    Source: company.COMPANY_WELCOME_FROM_EMAIL_ADDRESS,
   };
 
   return await ses.sendEmail(params).promise();

@@ -13,7 +13,7 @@ const error = (errorMessage, statusCode) => {
 const success = (data, total) => {
   const response = { data };
 
-  if (total > -1) response._meta = { total }
+  if (total > -1) response._meta = { total };
 
   return response;
 };
