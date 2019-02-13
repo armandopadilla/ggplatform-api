@@ -1,64 +1,57 @@
 /**
- * Join a specific contest
- *
- * @todo - is the user making the request the owner?
+ * Join a specific game
  *
  * FE sends BE contest to join and account that wants to join
- * System checks the entry fee.
- * System checks if the user has enough funds
- * If enough funds then withdraw and enter the user into contest
- * If NOT enough funds return a not-enough-funds error. FE can then take the user to another screen
+ * System checks if the game has a default contest.
+ * If so then
+ *  System checks if the user has enough funds
+ *  If enough funds then withdraw and enter the user into contest
+ *  If NOT enough funds return a not-enough-funds error. FE can then take the user to another screen
  */
 const ObjectId = require('mongodb').ObjectId;
-const { response } = require('../../../utils');
+const { response, game:gameUtils, contest:contestUtils } = require('../../../utils');
 const { db: collection } = require('../../../config');
 const withdraw = require('../../wallet/events/withdraw');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
-  const { userId } = req.body;
-  const { contestId } = req.params;
+  const {
+    userId,
+    contestId,
+  } = req.body;
+  const { gameId } = req.params;
 
-  // Check if the contestId is valid.
-  if (!ObjectId.isValid(contestId)) return response.error('Invalid Contest Id', 400);
+  // Check if the gameId is valid.
+  if (!ObjectId.isValid(gameId)) return response.error('Invalid game Id', 400);
 
   // Check if the userId is valid
-  if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
+  if (!ObjectId.isValid(userId)) return response.error('Invalid user Id', 400);
 
   try {
+    // Check if the user can join the game
+    gameUtils.canJoinGame(userId, gameId, db);
+
     // Check if the user can join the contest
-    const wallet = await db.collection(collection.WALLET_NAME).findOne({ ownerId: ObjectId(userId) });
-    const contest = await db.collection(collection.CONTEST_NAME).findOne({ _id: ObjectId(contestId) });
-
-    // Check if the wallet exists
-    if (!wallet) return response.error('Wallet not found', 404);
-
-    // Check if the contest exists
-    if (!contest) return response.error('Contest not found', 404);
-
-    // Check if the user is already a participant. If already a participant error out.
-    if (contest.participants.indexOf(userId) > -1) return response.error('User already a participant', 400);
+    contestUtils.canJoinContest(contestId, userId, db);
 
     // If ready to enter into contest...
-    if (wallet.balance >= contest.entryFee) {
-      const data = await db.collection(collection.CONTEST_NAME).updateOne(
-        { _id: ObjectId(contestId) },
-        { $addToSet: { participants: userId.toString() } },
-      );
+    // Add the user to the contest
+    const data = await db.collection(collection.CONTEST_COLL_NAME).updateOne(
+      { _id: ObjectId(contestId) },
+      { $addToSet: { participants: userId.toString() } },
+    );
 
-      if (data.matchedCount) {
-        await withdraw(userId, contest.entryFee, db);
+    // Widthdraw funds from the wallet.
+    if (data.matchedCount) {
+      await withdraw(userId, contest.entryFee, db);
 
-        // Update the pot
-        const newPot = contest.pot + contest.entryFee;
-        await db.collection(collection.CONTEST_NAME).updateOne({
-          _id: ObjectId(contestId)
-        }, { $set: { pot: newPot } });
+      // Update the pot
+      const newPot = contest.pot + contest.entryFee;
+      await db.collection(collection.CONTEST_COLL_NAME).updateOne({
+        _id: ObjectId(contestId)
+      }, { $set: { pot: newPot } });
 
-        return response.success({});
-      }
-    } else {
-      return response.error('Not enough funds', 400);
+      return response.success({});
     }
   } catch (error) {
     return response.error(error);
@@ -68,12 +61,12 @@ const handler = async (req, res) => {
 
 module.exports = fastify => fastify.route({
   method: 'POST',
-  url: '/:contestId/join',
+  url: '/:gameId/join',
   handler,
   schema: {
-    tags: ['Contest'],
-    description: 'Join a specific contest',
-    summary: 'Join contest',
+    tags: ['Game'],
+    description: 'Join a specific game',
+    summary: 'Join game',
     body: {
       type: 'object',
       properties: {
@@ -82,7 +75,7 @@ module.exports = fastify => fastify.route({
       required: ['userId']
     },
     params: {
-      contestId: { type: 'string', description: 'Unique contest id to join.' },
+      contestId: { type: 'string', description: 'Unique game id to join.' },
     },
     response: {
       200: {

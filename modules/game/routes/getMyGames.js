@@ -1,5 +1,6 @@
 /**
- * Fetch all contests for a specific user.
+ * Fetch all games the user has participated in.  Actually played NOT placed
+ * bets in.
  *
  */
 const ObjectId = require('mongodb').ObjectId;
@@ -16,22 +17,22 @@ const handler = async (req, res) => {
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
-    const user = await db.collection(collection.ACCOUNT_NAME).findOne({
+    const user = await db.collection(collection.ACCOUNT_COLL_NAME).findOne({
       _id: ObjectId(userId)
     });
 
     if(!user) return response.error('Account not found.', 404);
 
-    // Wondering if this is better than updating a "contests" list held onto
+    // Wondering if this is better than updating a "games" list held onto
     // the account object.
-    const contests = await db.collection(collection.CONTEST_NAME)
+    const games = await db.collection(collection.GAME_COLL_NAME)
       .find({
         participants: userId
       }).toArray();
 
-    const total = contests.length;
+    const total = games.length;
 
-    return response.success(contests || [], total);
+    return response.success(games || [], total);
   } catch (error) {
     return response.error(error);
   }
@@ -39,12 +40,12 @@ const handler = async (req, res) => {
 
 module.exports = fastify => fastify.route({
   method: 'GET',
-  url: '/my-contests',
+  url: '/my-games',
   handler,
   schema: {
-    tags: ['Contest'],
-    description: 'Fetch all the contests a specific user.',
-    summary: 'Fetch user contests',
+    tags: ['Game'],
+    description: 'Fetch all the games a specific user participants in.',
+    summary: 'Fetch user games',
     querystring: {
       userId: { type: "string", description: "Unique account Id." }
     },
@@ -59,13 +60,13 @@ module.exports = fastify => fastify.route({
               type: 'object',
               properties: {
                 _id: {type: 'string'},
-                title: {type: 'string', description: 'Contest title displayed to user.'},
-                startDateTime: {type: 'string', format: 'date-time', description: 'Start date time of contest.'},
-                endDateTime: {type: 'string', format: 'date-time', description: 'End date time of contest'},
+                title: {type: 'string', description: 'Game title displayed to user.'},
+                startDateTime: {type: 'string', format: 'date-time', description: 'Start date time of game.'},
+                endDateTime: {type: 'string', format: 'date-time', description: 'End date time of game'},
                 pot: {type: 'number', description: 'total amount in pot'},
                 streamURL: {type: 'string', description: 'Streaming service URL. Used to stream video.'},
-                status: {type: 'string', description: 'Contest status'},
-                entryFee: { type: 'number', description: 'Cost to enter the contest' }
+                status: {type: 'string', description: 'Game status'},
+                entryFee: { type: 'number', description: 'Cost to enter the game' }
               }
             }
           },

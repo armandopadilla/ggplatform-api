@@ -1,16 +1,16 @@
-const postCreateBucket = require('./routes/postCreateBucket');
-const getContestBetBuckets = require('./routes/getContestBetBuckets');
-const patchUpdateBetBucket = require('./routes/patchUpdateBetBucket');
+const postCreateContest = require('./routes/postCreateContest');
+const getGameContests = require('./routes/getGameContests');
+const patchUpdateContest = require('./routes/patchUpdateContest');
 
 module.exports = (fastify, opts, next) => {
-  // POST - /contest/:contestId/betbucket
-  postCreateBucket(fastify);
+  // POST - /game/:gameId/contest
+  postCreateContest(fastify);
 
-  // GET - /contest/:contestId/betbucket/list
-  getContestBetBuckets(fastify);
+  // GET - /game/:gameId/contest/list
+  getGameContests(fastify);
 
-  // PATCH - /contest/:contestId/betbucket/:betBucketId
-  patchUpdateBetBucket(fastify);
+  // PATCH - /games/:gameId/contest/:contestId
+  patchUpdateContest(fastify);
 
   next();
 };

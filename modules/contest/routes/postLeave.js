@@ -1,7 +1,7 @@
 /**
- * Leave a specific game
+ * Leave a specific contest
  *
- * @todo can the user do this?  Or should they contact support? I think they should unless the game already started.
+ * @todo can the user do this?  Or should they contact support?
  *
  * On update
  *  send out email
@@ -11,37 +11,58 @@
 const ObjectId = require('mongodb').ObjectId;
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
-const { sendLeaveGameEmail } = require('../../../helpers/email');
+const { sendLeaveContestEmail } = require('../../../helpers/email');
 const deposit = require('../../wallet/events/deposit');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
   const { userId } = req.body;
-  const { gameId } = req.params;
+  const { contestId } = req.params;
 
-  if (!ObjectId.isValid(gameId)) return response.error('Invalid game Id', 400);
+  if (!ObjectId.isValid(contestId)) return response.error('Invalid Contest Id', 400);
 
   // Check if the userId is valid
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
-    const user = await db.collection(collection.ACCOUNT_COLL_NAME).findOne({
+    const user = await db.collection(collection.ACCOUNT_NAME).findOne({
       _id: ObjectId(userId)
+    });
+
+    const wallet = await db.collection(collection.WALLET_NAME).findOne({
+      ownerId: ObjectId(userId)
+    });
+
+    const contest = await db.collection(collection.CONTEST_NAME).findOne({
+      _id: ObjectId(contestId)
     });
 
     // User preset?
     if (!user) return response.error('Account not found', 404);
 
-    // Contest present?
-    if (!contest) return response.error('Game not found', 404);
+    // Wallet present?
+    if (!wallet) return response.error('Wallet not found', 404);
 
-    const data = await db.collection(collection.GAME_COLL_NAME).updateOne(
-      { _id: ObjectId(gameId) },
+    // Contest present?
+    if (!contest) return response.error('Contest not found', 404);
+
+    const data = await db.collection(collection.CONTEST_NAME).updateOne(
+      { _id: ObjectId(contestId) },
       { $pull: { participants: userId } },
     );
 
     // Send out email - here
-    await sendLeaveGameEmail(user.email);
+    await sendLeaveContestEmail(user.email);
+
+    // Deduct the pot
+    const newPot = (contest.pot - contest.entryFee);
+    await await db.collection(collection.CONTEST_NAME).updateOne(
+      { _id: ObjectId(contestId) },
+      { $set: { pot: newPot } }
+    );
+
+    // Credit the users wallet
+    await deposit(userId, contest.entryFee, db);
 
     // Audit entry, here or in individual items.
 
@@ -55,12 +76,12 @@ const handler = async (req, res) => {
 
 module.exports = fastify => fastify.route({
   method: 'POST',
-  url: '/:gameId/leave',
+  url: '/:contestId/leave',
   handler,
   schema: {
-    tags: ['Game'],
-    description: 'Leave a specific game.',
-    summary: 'Leave game',
+    tags: ['Contest'],
+    description: 'Leave a specific contest. Will refund user and deduct from pot.',
+    summary: 'Leave contest',
     body: {
       type: 'object',
       properties: {
@@ -69,7 +90,7 @@ module.exports = fastify => fastify.route({
       required: ['userId']
     },
     params: {
-      contestId: { type: 'string', description: 'Unique game id.'}
+      contestId: { type: 'string', description: 'Unique contest id.'}
     },
     response: {
       200: {

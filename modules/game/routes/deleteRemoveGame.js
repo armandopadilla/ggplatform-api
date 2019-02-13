@@ -1,6 +1,11 @@
 /**
- * Delete a specific contests - amdin only
+ * Delete a specific game
  * 0. This should really be a soft delete.  We need to make sure we keep a solid audit of thigns.
+ * 1. user can not delete a game once its started or finished.
+ * 2. User can not delete a game with participants.
+ * 3. User can not delete a game with contests.
+ *
+ * Questions.
  * 1. What happens to the pot? Full refunds?
  * 2. Can we reschedule?
  * 3. Do we send out any notification to the participants?
@@ -11,12 +16,14 @@ const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
-  const { contestId } = req.params;
+  const { gameId } = req.params;
   const { db } = res.context.config;
 
   try {
-    const data = await db.collection(collection.CONTEST_NAME).updateOne(
-      { _id: ObjectID(contestId) },
+    // @todo - check criteria for deletion.  See above.
+
+    const data = await db.collection(collection.GAME_COLL_NAME).updateOne(
+      { _id: ObjectID(gameId) },
       { $set: { status: 'canceled' } },
     );
 
@@ -30,14 +37,14 @@ const handler = async (req, res) => {
 
 module.exports = fastify => fastify.route({
   method: 'DELETE',
-  url: '/:contestId',
+  url: '/:gameId',
   handler,
   schema: {
-    tags: ['Contest'],
-    description: 'Delete a specific contest from the system.',
-    summary: 'Delete contest',
+    tags: ['Game'],
+    description: 'Delete a specific game from the system.',
+    summary: 'Delete game',
     params: {
-      contestId: { type: 'string', description: 'Unique contest id' }
+      contestId: { type: 'string', description: 'Unique game id' }
     },
     response: {
       200: {

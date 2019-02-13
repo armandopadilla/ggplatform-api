@@ -1,31 +1,32 @@
 /**
- * Fetch a specific contest
+ * Fetch a specific game
  *
- * Has basic info on the contest and participant count.
- * @todo  do we need a list of users in the contest?  I would think not?
+ * Has basic info on the game and participant count.
+ * @todo  do we need a list of users in the game?  I would think not?
+ * @todo do we need a list of contests?  - Hook
  */
 const { ObjectId } = require('mongodb').ObjectID;
 const { response } = require('../../../utils');
 const { db: collection, errors } = require('../../../config');
 
 const handler = async (req, res) => {
-  const { contestId } = req.params;
+  const { gameId } = req.params;
   const { db } = res.context.config;
 
-  if (!ObjectId.isValid(contestId)) return response.error('Invalid Contest Id', 400);
+  if (!ObjectId.isValid(gameId)) return response.error('Invalid Game Id', 400);
 
   try {
-    const contest = await db.collection(collection.CONTEST_NAME)
+    const game = await db.collection(collection.GAME_COLL_NAME)
       .findOne(
-        { _id: ObjectId(contestId) },
+        { _id: ObjectId(gameId) },
       );
 
-    if (!contest) return response.error(errors.CONTEST_NOT_FOUND, 404);
+    if (!game) return response.error(errors.GAME_NOT_FOUND, 404);
 
     // Grab the bets
     // @todo - link up with bets.
-    contest.bets = [];
-    return response.success(contest);
+    game.contests = [];
+    return response.success(game);
   } catch (error) {
     return response.error(error);
   }
@@ -33,14 +34,14 @@ const handler = async (req, res) => {
 
 module.exports = fastify => fastify.route({
   method: 'GET',
-  url: '/:contestId',
+  url: '/:gameId',
   handler,
   schema: {
-    tags: ['Contest'],
-    description: 'Fetch a contest in the system',
-    summary: 'Fetch a contest',
+    tags: ['Game'],
+    description: 'Fetch a game in the system',
+    summary: 'Fetch a game',
     params: {
-      contestId: { type: 'string', description: 'Unique contest Id' }
+      contestId: { type: 'string', description: 'Unique game Id' }
     },
     response: {
       200: {
@@ -51,19 +52,19 @@ module.exports = fastify => fastify.route({
             type: 'object',
             properties: {
               _id: { type: 'string' },
-              title: { type: 'string', description: 'Contest title displayed to user.' },
-              startDateTime: { type: 'string', format: 'date-time', description: 'Start date time of contest.' },
-              endDateTime: { type: 'string', format: 'date-time', description: 'End date time of contest' },
+              title: { type: 'string', description: 'Game title displayed to user.' },
+              startDateTime: { type: 'string', format: 'date-time', description: 'Start date time of game.' },
+              endDateTime: { type: 'string', format: 'date-time', description: 'End date time of game' },
               pot: { type: 'number', description: 'total amount in pot' },
               streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.' },
-              status: { type: 'string', description: 'Contest status' },
-              entryFee: { type: 'number', description: 'Cost to enter the contest' }
+              status: { type: 'string', description: 'Game status' },
+              entryFee: { type: 'number', description: 'Cost to enter the game' }
             }
           }
         }
       },
       400: {
-        description: 'Invalid Contest Id',
+        description: 'Invalid Game Id',
         type: 'object',
         properties: {
           statusCode: { type: 'number' },
@@ -72,7 +73,7 @@ module.exports = fastify => fastify.route({
         }
       },
       404: {
-        description: 'Contest not found',
+        description: 'Game not found',
         type: 'object',
         properties: {
           statusCode: { type: 'number' },

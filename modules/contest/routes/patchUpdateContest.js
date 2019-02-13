@@ -1,5 +1,5 @@
 /**
- * Update a specific bucket
+ * Update a specific contest
  */
 
 const ObjectId = require('mongodb').ObjectId;
@@ -23,30 +23,29 @@ const getUpdateObj = (params) => {
 };
 
 const handler = async (req, res) => {
-  const { contestId, betBucketId } = req.params;
+  const { gameId, contestId } = req.params;
   const { db } = res.context.config;
 
-  // Check if the contestId is valid
-  if (!ObjectId.isValid(contestId)) return response.error('Invalid Contest Id.', 400);
-  if (!ObjectId.isValid(betBucketId)) return response.error('Invalid Bet Bucket Id.', 400);
+  // Check if the gameId is valid
+  if (!ObjectId.isValid(gameId)) return response.error('Invalid game id.', 400);
+  if (!ObjectId.isValid(contestId)) return response.error('Invalid contest id.', 400);
 
-  // Check the contest and bet bucket exists
+  // Check the game and contest exists
   try {
-    const contest = await db.collection(collection.CONTEST_NAME).findOne({
-      _id: ObjectId(contestId)
+    const game = await db.collection(collection.GAME_COLL_NAME).findOne({
+      _id: ObjectId(gameId)
     });
-    if (!contest) return response.error('No Contest Found.', 404);
+    if (!game) return response.error('No game found.', 404);
 
-    const betBucket = await db.collection(collection.BETBUCKET_NAME).findOne(
-      { _id: ObjectId(betBucketId) }
+    const contest = await db.collection(collection.CONTEST_COLL_NAME).findOne(
+      { _id: ObjectId(contestId) }
     );
-    if (!betBucket) return response.error('No bet bucket found.', 404);
+    if (!contest) return response.error('No contest found.', 404);
 
     const updateObj = getUpdateObj(req.body);
-    console.log(updateObj);
 
-    const updateData = await db.collection(collection.BETBUCKET_NAME).updateOne(
-      { _id: ObjectId(betBucketId) },
+    const updateData = await db.collection(collection.CONTEST_COLL_NAME).updateOne(
+      { _id: ObjectId(contestId) },
       { $set: updateObj }
     );
 
@@ -59,27 +58,27 @@ const handler = async (req, res) => {
 
 module.exports = fastify => fastify.route({
   method: 'PATCH',
-  url: '/:betBucketId',
+  url: '/:contestId',
   handler,
   schema: {
-    tags: ['Bet'],
-    description: 'Update a "bet bucket" within an existing contest',
-    summary: 'Update a "bet bucket"',
+    tags: ['Contest'],
+    description: 'Update a contest within an existing game',
+    summary: 'Update a contest',
     params: {
+      gameId: {
+        type: "string",
+        description: "Unique game Id."
+      },
       contestId: {
         type: "string",
         description: "Unique contest Id."
-      },
-      betBucketId: {
-        type: "string",
-        description: "Unique bet bucket Id."
       }
     },
     body: {
       type: "object",
       properties: {
-        title: { type: "string", description: "Bet Bucket title.  What is shown to the user." },
-        description: { type: "string", description: "Short description of the bet bucket.  Shown to the user." },
+        title: { type: "string", description: "Contest title.  What is shown to the user." },
+        description: { type: "string", description: "Short description of the contest.  Shown to the user." },
         minEntryFee: { type: "number", description: "Minimum entry fee.", min: 1 },
         status: { type: 'string', enum: ['open', 'closed', 'paused', 'distributing', 'finished'] }
       }
