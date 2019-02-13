@@ -1,39 +1,47 @@
 /**
  * Game functionality
  *
+ * 1. User/System (U/S) can create a game
+ * 2. (U/S) can update a game.
+ * 3. (U/S) can NOT delete a game for now if there are participants.
+ * 4. (U/S) can fetch all games in the system.
+ * 5. (U/S) can fetch a specifi game
+ * 6. (U/S) can fetch a specific users games they've created or entered.
+ * 7. User can join a game.  (hook - entering a game requires a fee)
+ * 8. User can leave a game. (hook - give the entry fee back)
  */
 const getMyGames = require('./routes/getMyGames');
-const getContest = require('./routes/getContest');
-const getContests = require('./routes/getContests');
-const postCreateContest = require('./routes/postCreateContest');
-const patchUpdateContest = require('./routes/patchUpdateContest');
-const deleteRemoveContest = require('./routes/deleteRemoveContest');
+const getGame = require('./routes/getGame');
+const getGames = require('./routes/getGames');
+const postCreateGame = require('./routes/postCreateGame');
+const patchUpdateGame = require('./routes/patchUpdateGame');
+const deleteRemoveGame = require('./routes/deleteRemoveGame');
 const postJoin = require('./routes/postJoin');
 const postLeave = require('./routes/postLeave');
 
 module.exports = (fastify, opt, next) => {
-  // GET - /contest/my-contests
+  // GET - /game/my-games
   getMyContests(fastify);
 
-  // GET - /contest/:contestId
-  getContest(fastify);
+  // GET - /game/:gameId
+  getGame(fastify);
 
-  // GET - /contest/list
-  getContests(fastify);
+  // GET - /game/list
+  getGames(fastify);
 
-  // POST - /contest
-  postCreateContest(fastify);
+  // POST - /game
+  postCreateGame(fastify);
 
-  // PATCH - /contest/:contestId
-  patchUpdateContest(fastify);
+  // PATCH - /game/:gameId
+  patchUpdateGame(fastify);
 
-  // DELETE - /contest/:contestId
-  deleteRemoveContest(fastify);
+  // DELETE - /game/:gameId
+  deleteRemoveGame(fastify);
 
-  // POST - /contest/:contestId/join
+  // POST - /game/:gameId/join
   postJoin(fastify);
 
-  // POST - /contest/:contestId/leave
+  // POST - /game/:gameId/leave
   postLeave(fastify);
 
   next();

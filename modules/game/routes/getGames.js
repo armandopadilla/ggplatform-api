@@ -1,7 +1,9 @@
 /**
- * Fetch a list of contests
+ * Fetch a list of games
  *
- * Has basic info on the contest and participant count.
+ * Has basic info on the games and participant count.
+ * @todo - filtering and sorting.
+ * @todo - Pagination.
  */
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
@@ -10,12 +12,12 @@ const handler = async (req, res) => {
   const { db } = res.context.config;
 
   try {
-    const contests = await db.collection(collection.CONTEST_NAME)
+    const games = await db.collection(collection.GAME_COLL_NAME)
       .find({}).toArray();
 
-    const total = contests.length;
+    const total = games.length;
 
-    return response.success(contests || [], total);
+    return response.success(games || [], total);
   } catch (error) {
     return response.error(error);
   }
@@ -26,9 +28,9 @@ module.exports = fastify => fastify.route({
   url: '/list',
   handler,
   schema: {
-    tags: ['Contest'],
-    description: 'Fetch a list of all contests in the system',
-    summary: 'Fetch contests',
+    tags: ['Game'],
+    description: 'Fetch a list of all games in the system',
+    summary: 'Fetch games',
     response: {
       200: {
         description: 'Successful response',
@@ -40,13 +42,12 @@ module.exports = fastify => fastify.route({
               type: 'object',
               properties: {
                 _id: {type: 'string'},
-                title: {type: 'string', description: 'Contest title displayed to user.'},
-                startDateTime: {type: 'string', format: 'date-time', description: 'Start date time of contest.'},
-                endDateTime: {type: 'string', format: 'date-time', description: 'End date time of contest'},
+                title: {type: 'string', description: 'Game title displayed to user.'},
+                startDateTime: {type: 'string', format: 'date-time', description: 'Start date time of game.'},
+                endDateTime: {type: 'string', format: 'date-time', description: 'End date time of game'},
                 pot: {type: 'number', description: 'total amount in pot'},
                 streamURL: {type: 'string', description: 'Streaming service URL. Used to stream video.'},
-                status: {type: 'string', description: 'Contest status'},
-                entryFee: { type: 'number', description: 'Cost to enter the contest' }
+                status: {type: 'string', description: 'Game status'}
               }
             }
           },
