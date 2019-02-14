@@ -1,16 +1,16 @@
 /**
- * Join a specific game
+ * Join a specific contest
  *
  * @todo - is the user making the request the owner?
  *
- * FE sends BE contest to join and account that wants to join
- * System checks the entry fee.
- * System checks if the user has enough funds
- * If enough funds then withdraw and enter the user into contest
- * If NOT enough funds return a not-enough-funds error. FE can then take the user to another screen
+ * FE sends BE request to join a contest
+ *  System checks the entry fee.
+ *  System checks if the user has enough funds
+ *  If enough funds then withdraw and enter the user into contest
+ *  If NOT enough funds return a not-enough-funds error. FE can then take the user to another screen
  */
 const ObjectId = require('mongodb').ObjectId;
-const { response } = require('../../../utils');
+const { response, contestUtils: contest } = require('../../../utils');
 const { db: collection } = require('../../../config');
 const withdraw = require('../../wallet/events/withdraw');
 
@@ -20,38 +20,33 @@ const handler = async (req, res) => {
   const { contestId } = req.params;
 
   // Check if the contestId is valid.
-  if (!ObjectId.isValid(contestId)) return response.error('Invalid Contest Id', 400);
+  if (!ObjectId.isValid(contestId)) return response.error('Invalid contest id', 400);
 
   // Check if the userId is valid
-  if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
+  if (!ObjectId.isValid(userId)) return response.error('Invalid user Id', 400);
 
   try {
+    // can join the contest?
+    await contestUtils.canJoinContest(contestId, userId, db);
+
     // Check if the user can join the contest
-    const wallet = await db.collection(collection.WALLET_NAME).findOne({ ownerId: ObjectId(userId) });
-    const contest = await db.collection(collection.CONTEST_NAME).findOne({ _id: ObjectId(contestId) });
-
-    // Check if the wallet exists
-    if (!wallet) return response.error('Wallet not found', 404);
-
-    // Check if the contest exists
-    if (!contest) return response.error('Contest not found', 404);
-
-    // Check if the user is already a participant. If already a participant error out.
-    if (contest.participants.indexOf(userId) > -1) return response.error('User already a participant', 400);
+    const wallet = await db.collection(collection.WALLET_COLL_NAME).findOne({ ownerId: ObjectId(userId) });
+    const contest = await db.collection(collection.CONTEST_COLL_NAME).findOne({ _id: ObjectId(contestId) });
 
     // If ready to enter into contest...
     if (wallet.balance >= contest.entryFee) {
-      const data = await db.collection(collection.CONTEST_NAME).updateOne(
+      const data = await db.collection(collection.CONTEST_COLL_NAME).updateOne(
         { _id: ObjectId(contestId) },
         { $addToSet: { participants: userId.toString() } },
       );
 
+      // All good so withdraw funds.
       if (data.matchedCount) {
         await withdraw(userId, contest.entryFee, db);
 
         // Update the pot
         const newPot = contest.pot + contest.entryFee;
-        await db.collection(collection.CONTEST_NAME).updateOne({
+        await db.collection(collection.CONTEST_COLL_NAME).updateOne({
           _id: ObjectId(contestId)
         }, { $set: { pot: newPot } });
 
