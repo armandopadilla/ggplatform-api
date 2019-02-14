@@ -25,7 +25,13 @@ const sendLeaveGameEmail = async(email) => {
   const subject = 'X You Left Contest';
   const body = 'Aww sucks! You successfully left a contest.  We\'ve refunded your wallet.';
   return await sendEmail(subject, body, email);
-}
+};
+
+const sendLeaveContestEmail = async (email) => {
+  const subject = 'X You Left Contest';
+  const body = 'Aww sucks! You successfully left a contest.  We\'ve refunded your wallet.';
+  return await sendEmail(subject, body, email);
+};
 
 module.exports = {
   sendWelcomeEmail,
