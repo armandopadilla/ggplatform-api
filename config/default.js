@@ -5,7 +5,7 @@ module.exports = {
       url: process.env.MONGO_CONN_STRING,
       useNewUrlParser: true,
     },
-    USER_COLL_NAME: 'accounts',
+    USER_COLL_NAME: 'users',
     WALLET_COLL_NAME: 'wallets',
     EVENTLOGGER_COLL_NAME: 'event_logger',
     GAME_COLL_NAME: 'games',
@@ -41,6 +41,6 @@ module.exports = {
   company: {
     COMPANY_NAME: '',
     COMPANY_SUPPORT_EMAIL: '',
-    COMPANY_WELCOME_FROM_EMAIL: '',
+    COMPANY_WELCOME_FROM_EMAIL_ADDRESS: 'support@wiredpanda.com',
   }
 };

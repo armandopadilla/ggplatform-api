@@ -82,7 +82,7 @@ const handler = async (req, res) => {
 
     // Compose the response
     const data = {
-      account: accountObj,
+      user: userObj,
       wallet,
     };
 
@@ -110,7 +110,7 @@ module.exports = fastify => fastify.route({
         phone: { type: 'string', description: 'XXX-XXX-XXXX eg 323-555-7056' },
         email: { type: 'string', format: 'email', description: 'User\s email address' },
         password: { type: 'string', description: 'Password for user', minLength: 5, maxLength: 20 },
-        dob: { type: 'string', format: 'date', description: '10/03/1981' },
+        dob: { type: 'string', format: 'date-time', description: '10/03/1981' },
         acceptedTerms: { type: 'string', description: 'Indicates if user has accepted the TOS', enum: ['yes', 'no'] },
       },
       required: ['firstName', 'username', 'password', 'dob', 'acceptedTerms']
@@ -123,7 +123,7 @@ module.exports = fastify => fastify.route({
           "data": {
             type: 'object',
             properties: {
-              account: {
+              user: {
                 type: 'object',
                 properties: {
                   _id: { type: 'string' },

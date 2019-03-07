@@ -43,11 +43,11 @@ fastify.register(require('fastify-swagger'), {
 });
 
 // Register all endpoints
-fastify.register(require('./modules/user'), { prefix: '/user' });
-fastify.register(require('./modules/game'), { prefix: '/game' });
-fastify.register(require('./modules/auth'), { prefix: '/auth' });
-fastify.register(require('./modules/wallet'), { prefix: '/wallet' });
-fastify.register(require('./modules/betbucket'), { prefix: '/contest/:contestId/betbucket' });
+fastify.register(require('./modules/user'), { prefix: '/v1/user' });
+//fastify.register(require('./modules/game'), { prefix: '/game' });
+//fastify.register(require('./modules/auth'), { prefix: '/auth' });
+//fastify.register(require('./modules/wallet'), { prefix: '/wallet' });
+//fastify.register(require('./modules/contest'), { prefix: '/contest/:contestId/betbucket' });
 
 const start = async () => {
   try {

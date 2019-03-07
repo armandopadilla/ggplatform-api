@@ -5,7 +5,7 @@ services:
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_DATABASE: phoenix
+      MONGO_INITDB_DATABASE: gtgplatform
   redis:
     image: redis
     ports:
