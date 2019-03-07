@@ -12,7 +12,7 @@ const ObjectId = require('mongodb').ObjectId;
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
 const { sendLeaveContestEmail } = require('../../../helpers/email');
-const deposit = require('../../wallet/events/deposit');
+const { wallet } = require('../../../utils');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
@@ -62,7 +62,7 @@ const handler = async (req, res) => {
     );
 
     // Credit the users wallet
-    await deposit(userId, contest.entryFee, db);
+    await wallet.deposit(userId, contest.entryFee, db);
 
     // Audit entry, here or in individual items.
 
