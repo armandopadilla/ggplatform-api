@@ -4,20 +4,23 @@
  *
  */
 const ObjectId = require('mongodb').ObjectId;
-const { response } = require('../../../utils');
+const { response, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
+
 const handler = async (req, res) => {
-  const { db } = res.context.config;
+  const { db, cache } = res.context.config;
 
   // Will actually get this from JWT
-  const { userId } = req.query;
+  const { id: userId } = await auth.getSessionInfo(req, cache);
+
+  if (!userId) return response.error('Unathorized request', 401);
 
   // Check the userId is valid and present
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
-    const user = await db.collection(collection.ACCOUNT_COLL_NAME).findOne({
+    const user = await db.collection(collection.USER_COLL_NAME).findOne({
       _id: ObjectId(userId)
     });
 
@@ -109,5 +112,6 @@ module.exports = fastify => fastify.route({
   },
   config: {
     db: fastify.mongo.db,
+    cache: fastify.redis,
   },
 });

@@ -17,8 +17,6 @@ const getNewTokenInfo = async (user, password) => {
     username: user.username,
   };
 
-  console.log(data);
-
   const microtime = new Date().getTime().toString();
   const salt = crypto.createHash('md5').update(microtime).digest('hex');
   const token = jwt.sign(data, salt);

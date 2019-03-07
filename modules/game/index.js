@@ -21,7 +21,7 @@ const postLeave = require('./routes/postLeave');
 
 module.exports = (fastify, opt, next) => {
   // GET - /game/my-games
-  getMyContests(fastify);
+  getMyGames(fastify);
 
   // GET - /game/:gameId
   getGame(fastify);
