@@ -6,11 +6,14 @@ const { sendEmail } = require('../modules/notifications');
  *
  * @param account
  */
+// @todo - move this to a config.
 const sendWelcomeEmail = async (email) => {
   if (!email) throw new Error('email required');
 
-  const subject = 'Welcome to X!';
-  const body = 'Some welcome email copy goes here.  Your X success team!';
+  const subject = 'Welcome to gtgchamp.com!';
+  const body = 'You\'re hooked up to start earning with your skills.  Invite ' +
+    'your friends to a scheduled matches, battle on your favorite platform, win, come back to see ' +
+    'your earnings!  Get started now.  <br><br>Your X success team!';
   return await sendEmail(subject, body, email);
 };
 
