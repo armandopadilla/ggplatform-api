@@ -30,6 +30,12 @@ module.exports = {
     },
     ses: {
       region: 'us-west-2'
+    },
+    sns: {
+
+    },
+    sqs: {
+
     }
   },
   company: {

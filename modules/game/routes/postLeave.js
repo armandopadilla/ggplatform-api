@@ -12,7 +12,7 @@ const ObjectId = require('mongodb').ObjectId;
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
 const { sendLeaveGameEmail } = require('../../../helpers/email');
-const deposit = require('../../wallet/events/deposit');
+const { wallet } = require('../../../utils');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;

@@ -17,8 +17,8 @@ fastify.register(require('fastify-swagger'), {
   exposeRoute: true,
   swagger: {
     info: {
-      title: 'gglol API',
-      description: 'gglol API collection',
+      title: 'ggmetacom API',
+      description: 'ggmetacom API collection',
       version: '0.1.0'
     },
     host: 'localhost',
@@ -29,8 +29,8 @@ fastify.register(require('fastify-swagger'), {
       { name: 'Account', description: 'Account related end-points' },
       { name: 'Auth', description: 'Authentication related end-points' },
       { name: 'Wallet', description: 'Wallet related end-points' },
-      { name: 'Bet', description: 'Bet/Betting related end-points' },
-      { name: 'Contest', description: 'Contests related end-points' },
+      { name: 'Contest', description: 'Bet/Betting related end-points' },
+      { name: 'Game', description: 'Game related end-points' },
     ],
     securityDefinitions: {
       apiKey: {
