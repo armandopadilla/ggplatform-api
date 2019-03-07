@@ -2,12 +2,15 @@
  * Logout the user out.
  * Remove the JWT from session store
  */
+const { response } = require('../../../utils');
 
-const handler = (req, res) => {
+const handler = async (req, res) => {
   const { cache } = res.context.config;
   const { authorization } = req.headers;
 
   // Fetch the value from the header
+  if (authorization == undefined) return response.error('Unathorized request.', 401);
+
   const token = authorization.replace('Bearer', '').trim();
   if (!token) return res.send({});
 
@@ -32,7 +35,16 @@ module.exports = fastify => fastify.route({
             type: 'object'
           }
         }
-      }
+      },
+      401: {
+        description: 'Unauthorized Access',
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number' },
+          error: { type: 'string' },
+          message: { type: 'string' }
+        }
+      },
     }
   },
   config: {

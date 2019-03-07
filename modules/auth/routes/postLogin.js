@@ -13,10 +13,11 @@ const { db: collection } = require('../../../config');
 const getNewTokenInfo = async (user, password) => {
   const data = {
     email: user.email,
-    id: user.id,
-    firstname: user.firstname,
+    id: user._id,
     username: user.username,
   };
+
+  console.log(data);
 
   const microtime = new Date().getTime().toString();
   const salt = crypto.createHash('md5').update(microtime).digest('hex');
@@ -34,16 +35,16 @@ const handler = async (req, res) => {
   const { cache, db } = res.context.config;
   const { email, password } = req.body;
 
-  const user = await db.collection(collection.ACCOUNT_NAME).findOne({ email });
+  const user = await db.collection(collection.USER_COLL_NAME).findOne({ email });
 
   if (!user || !auth.isValid(password, user.password)) return response.error('Invalid login', 401);
 
   const tokenInfo = await getNewTokenInfo(user, password);
 
   // Save in session store (cache)
-  cache.setex(tokenInfo.token, JSON.stringify(tokenInfo));
+  await cache.set(tokenInfo.token, JSON.stringify(tokenInfo));
 
-  return res.send({
+  return response.success({
     token: tokenInfo.token,
   });
 };
