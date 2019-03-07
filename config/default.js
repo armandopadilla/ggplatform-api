@@ -25,8 +25,8 @@ module.exports = {
   },
   aws: {
     auth: {
-      ACCESS_KEY_ID: 'AKIAJ7XLSUSTUZX5FYCQ',
-      SECRET_KEY: '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'
+      ACCESS_KEY_ID: '',
+      SECRET_KEY: ''
     },
     ses: {
       region: 'us-west-2'

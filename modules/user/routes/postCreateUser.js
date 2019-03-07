@@ -34,7 +34,7 @@ const handler = async (req, res) => {
     dob,
     acceptedTerms,
   } = req.body;
-  
+
   const hashPass = auth.getHash(password);
   const userObj = {
     firstName,
