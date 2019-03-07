@@ -7,6 +7,7 @@ const error = (errorMessage, statusCode) => {
   if (statusCode === 404) return Boom.notFound(errorMessage);
   if (statusCode === 401) return Boom.unauthorized(errorMessage);
   if (statusCode === 400) return Boom.badRequest(errorMessage);
+
   return Boom.badImplementation(errorMessage);
 };
 
