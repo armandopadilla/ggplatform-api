@@ -132,19 +132,8 @@ Contest - GET /contest/my-contests (see API docs above)
 
 # To Do
 ## Admin Tool
-1. Create contest CMS
-1. Provide credits 
-1. Provide winnings.
-1. Enter play by play
-1. ACLs
-1. Unit Tests
-1. Integration Tests
-1. Event Logger
+
 1. Stripe integration
-1. Set up Infra (AWS Lambda, ec2 with mongos, elastic cache redis, api gateway)
-1. DB - Mongo -> DynamoDB
-1. Cache - Redis
-1. Tech - NodeJS -> Go
-1. Change out to GraphQL
-1. Integrate SAM
-1. Auto Deploy of the documentation.
+1. Reminders 
+1. Update Game - a bunch of questions to answer but not show stoppers.
+1. Delete Game - a bunch of questions but not show stopper.

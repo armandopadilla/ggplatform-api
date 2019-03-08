@@ -7,26 +7,28 @@
  * @todo - also missing are the different contests and managing those. Should it be done here? No. It should be in a wager service.
  */
 const { ObjectID } = require('mongodb');
-const { response } = require('../../../utils');
+const { response, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { gameId } = req.params;
-  const { db } = res.context.config;
+  const { db, cache } = res.context.config;
+
+  const { id: userId } = await auth.getSessionInfo(req, cache);
+  if (!userId) return response.error('Unauthorized request', 401);
+
   const {
     title,
     startDateTime,
     endDateTime,
     streamURL,
-    status,
   } = req.body;
 
   const updateObj = {
     title,
     startDateTime,
     endDateTime,
-    streamURL,
-    status
+    streamURL
   };
 
   if (!ObjectID.isValid(gameId)) return response.error('Invalid game Id', 400);
@@ -63,8 +65,7 @@ module.exports = fastify => fastify.route({
         streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.', format: 'url' },
         status: { type: 'string', description: 'Game status', enum: ['active', 'pending', 'in_progress', 'distributing_pot', 'paused', 'completed' ] },
         entryFee: { type: 'number', description: 'Cost to enter the game' }
-      },
-      required: ['title', 'startDateTime', 'endDateTime', 'streamURL', 'entryFee']
+      }
     },
     params: {
       contestId: { type: 'string', description: 'Unique game id.' },
@@ -118,5 +119,6 @@ module.exports = fastify => fastify.route({
   },
   config: {
     db: fastify.mongo.db, // This seems off.
+    cache: fastify.redis,
   },
 });
