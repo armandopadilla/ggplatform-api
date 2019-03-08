@@ -25,6 +25,7 @@ const handler = async (req, res) => {
     description,
     minEntryFee,
     status,
+    pot,
   } = req.body;
 
   // Check if the gameId is valid
@@ -47,7 +48,8 @@ const handler = async (req, res) => {
       status: status || 'pending',
       participants: [],
       createdDateTime: new Date(),
-      updatedDateTime: new Date()
+      updatedDateTime: new Date(),
+      pot: pot || 0,
     };
 
     const contest = await db.collection(collection.CONTEST_COLL_NAME).insertOne(contestObj);

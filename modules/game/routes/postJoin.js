@@ -9,17 +9,19 @@
  *  If NOT enough funds return a not-enough-funds error. FE can then take the user to another screen
  */
 const ObjectId = require('mongodb').ObjectId;
-const { response, game:gameUtils, contest:contestUtils } = require('../../../utils');
+const { response, game:gameUtils, contest:contestUtils, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
 const withdraw = require('../../wallet/events/withdraw');
 
 const handler = async (req, res) => {
-  const { db } = res.context.config;
+  const { db, cache } = res.context.config;
   const {
-    userId,
     contestId,
   } = req.body;
   const { gameId } = req.params;
+
+  const { id: userId } = await auth.getSessionInfo(req, cache);
+  if (!userId) return response.error('Unauthorized request', 401);
 
   // Check if the gameId is valid.
   if (!ObjectId.isValid(gameId)) return response.error('Invalid game Id', 400);
@@ -29,10 +31,10 @@ const handler = async (req, res) => {
 
   try {
     // Check if the user can join the game
-    gameUtils.canJoinGame(userId, gameId, db);
+    //await gameUtils.canJoinGame(userId, gameId, db);
 
     // Check if the user can join the contest
-    contestUtils.canJoinContest(contestId, userId, db);
+    await contestUtils.canJoinContest(contestId, userId, db);
 
     // If ready to enter into contest...
     // Add the user to the contest
@@ -41,12 +43,15 @@ const handler = async (req, res) => {
       { $addToSet: { participants: userId.toString() } },
     );
 
+    const contest = await db.collection(collection.CONTEST_COLL_NAME)
+      .findOne({ _id: ObjectId(contestId) })
+
     // Widthdraw funds from the wallet.
     if (data.matchedCount) {
-      await withdraw(userId, contest.entryFee, db);
+      await withdraw(userId, contest.minEntryFee, db);
 
       // Update the pot
-      const newPot = contest.pot + contest.entryFee;
+      const newPot = contest.pot + contest.minEntryFee;
       await db.collection(collection.CONTEST_COLL_NAME).updateOne({
         _id: ObjectId(contestId)
       }, { $set: { pot: newPot } });
@@ -70,9 +75,8 @@ module.exports = fastify => fastify.route({
     body: {
       type: 'object',
       properties: {
-        userId: { type: 'string', description: 'Unique user id.' }
-      },
-      required: ['userId']
+        contestId: { type: 'string', description: 'Unique contest id.' }
+      }
     },
     params: {
       contestId: { type: 'string', description: 'Unique game id to join.' },
@@ -118,5 +122,6 @@ module.exports = fastify => fastify.route({
   },
   config: {
     db: fastify.mongo.db,
+    cache: fastify.redis
   },
 });

@@ -137,3 +137,4 @@ Contest - GET /contest/my-contests (see API docs above)
 1. Reminders 
 1. Update Game - a bunch of questions to answer but not show stoppers.
 1. Delete Game - a bunch of questions but not show stopper.
+1. Leave a contest - what happens when they leave?

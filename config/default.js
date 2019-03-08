@@ -9,7 +9,7 @@ module.exports = {
     WALLET_COLL_NAME: 'wallets',
     EVENTLOGGER_COLL_NAME: 'event_logger',
     GAME_COLL_NAME: 'games',
-    BETBUCKET_COLL_NAME: 'betbuckets'
+    CONTEST_COLL_NAME: 'contests'
   },
   errors: {
     USER_NOT_FOUND: 'User not found',
