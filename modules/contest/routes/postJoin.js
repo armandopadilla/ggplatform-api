@@ -1,4 +1,5 @@
 /**
+ * DO NOT USE DO NOT USE - gtgsidebet functionality ONLY
  * Join a specific contest - Not required for team vs team.
  *
  * FE sends BE contest to join and account that wants to join

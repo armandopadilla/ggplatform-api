@@ -31,7 +31,7 @@ const handler = async (req, res) => {
 
   try {
     // Check if the user can join the game
-    //await gameUtils.canJoinGame(userId, gameId, db);
+    await gameUtils.canJoinGame(userId, gameId, db);
 
     // Check if the user can join the contest
     await contestUtils.canJoinContest(contestId, userId, db);
@@ -44,7 +44,7 @@ const handler = async (req, res) => {
     );
 
     const contest = await db.collection(collection.CONTEST_COLL_NAME)
-      .findOne({ _id: ObjectId(contestId) })
+      .findOne({ _id: ObjectId(contestId) });
 
     // Widthdraw funds from the wallet.
     if (data.matchedCount) {

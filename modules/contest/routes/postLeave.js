@@ -1,4 +1,6 @@
 /**
+ * DO NOT USE DO NOT USE - gtgsidebet functionality ONLY
+ *
  * Leave a specific contest - Not required for team vs team.
  *
  * @todo can the user do this?  Or should they contact support? I think they should unless the game already started.

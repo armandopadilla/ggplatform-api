@@ -57,6 +57,15 @@ const handler = async (req, res) => {
 
     const contest = await db.collection(collection.CONTEST_COLL_NAME).insertOne(contestObj);
 
+    // Add the participants and contests to this game
+    await db.collection(collection.GAME_COLL_NAME).updateOne(
+      { _id: data.ops[0]._id },
+      { $set: {
+        participants: [userId],
+        contests: [contest.ops[0]._id]
+      } }
+    );
+
     if (data.insertedCount && contest.insertedCount) return response.success(insertObj);
 
     return response.error('Could not create game.  Unknown error', 400);
