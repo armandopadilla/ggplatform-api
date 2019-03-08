@@ -4,11 +4,16 @@
  *
  * @todo - Auth
  */
-const { response } = require('../../../utils');
+const { response, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
+const withdraw = require('../../wallet/events/withdraw');
 
 const handler = async (req, res) => {
-  const { db } = res.context.config;
+  const { db, cache } = res.context.config;
+
+  const { id: userId } = await auth.getSessionInfo(req, cache);
+  if (!userId) return response.error('Unauthorized request', 401);
+
   const {
     title,
     startDateTime, // @todo - is this needed at this time if users will schedule this.
@@ -16,27 +21,32 @@ const handler = async (req, res) => {
     pot, // @todo should the user creating this game set the pot already? No but we should keep track of the pot in general.
     streamURL,
     status,
-    entryFee
+    entryFee,
   } = req.body;
+
 
   const insertObj = {
     title,
     startDateTime,
-    endDateTime,
-    pot,
-    streamURL,
-    status,
+    endDateTime: endDateTime || '',
+    pot: pot || 0.00,
+    streamURL: streamURL || '',
+    status: status || 'pending',
     participants: [], // Initially empty. Who is actually in the game.  NOT who has placed a wager on a contest.
     entryFee,
     contests: [], // Holds ids of all the contests this game contains.
+    createdBy: userId,
   };
 
   try {
+    await withdraw(userId, entryFee, db);
+
+    // If no errors from the withdraw
+    insertObj.pot = entryFee;
     const data = await db.collection(collection.GAME_COLL_NAME).insertOne(insertObj);
 
     if (data.insertedCount) return response.success(insertObj);
 
-    // When is this triggered???
     return response.error('Could not create game.  Unknown error', 400);
   } catch (error) {
     return response.error(error);
@@ -63,7 +73,7 @@ module.exports = fastify => fastify.route({
         status: { type: 'string', description: 'Game status', enum: ['active', 'pending', 'in_progress', 'distributing_pot', 'paused', 'completed' ] },
         entryFee: { type: 'number', description: 'Cost to enter the game' }
       },
-      required: ['title', 'startDateTime', 'endDateTime', 'streamURL', 'status', 'entryFee'],
+      required: ['title', 'startDateTime', 'entryFee'],
     },
     response: {
       200: {
@@ -107,5 +117,6 @@ module.exports = fastify => fastify.route({
   },
   config: {
     db: fastify.mongo.db, // This seems off.
+    cache: fastify.redis
   },
 });

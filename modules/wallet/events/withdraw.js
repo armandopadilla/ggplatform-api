@@ -26,7 +26,7 @@ const withdraw = async (userId, amount, db) => {
     if (!wallet) throw new Error('This user has no wallet');
 
     // Check if the wallet has enough to withdraw
-    if (wallet.balance < parseFloat(amount)) throw new Error('Not enough funds.');
+    if (wallet.balance < parseFloat(amount)) throw Error('Not enough funds.');
 
     // Withdraw!
     const newBalance = parseFloat(wallet.balance - amount);

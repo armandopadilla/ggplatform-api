@@ -4,9 +4,13 @@ const error = (errorMessage, statusCode) => {
   // Log things here.
   // @todo fastify.log.error(errorMessage);
 
+  console.log(errorMessage)
   if (statusCode === 404) return Boom.notFound(errorMessage);
   if (statusCode === 401) return Boom.unauthorized(errorMessage);
-  if (statusCode === 400) return Boom.badRequest(errorMessage);
+  if (
+    statusCode === 400 ||
+    errorMessage.toString().indexOf('Not enough funds') > -1
+  ) return Boom.badRequest(errorMessage);
 
   return Boom.badImplementation(errorMessage);
 };
