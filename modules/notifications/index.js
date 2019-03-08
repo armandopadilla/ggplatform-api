@@ -16,6 +16,7 @@ const sendPush = (text) => {
   // Do the push
 };
 
+const sendText = (text) => {}
 
 /**
  * Send email
@@ -57,4 +58,5 @@ const sendEmail = async (subject, body, to) => {
 module.exports = {
   sendPush,
   sendEmail,
+  sendText
 };

@@ -9,7 +9,8 @@ const error = (errorMessage, statusCode) => {
   if (statusCode === 401) return Boom.unauthorized(errorMessage);
   if (
     statusCode === 400 ||
-    errorMessage.toString().indexOf('Not enough funds') > -1
+    errorMessage.toString().indexOf('Not enough funds') > -1 ||
+    errorMessage.toString().indexOf('User already a participant in the contest') > -1
   ) return Boom.badRequest(errorMessage);
 
   return Boom.badImplementation(errorMessage);

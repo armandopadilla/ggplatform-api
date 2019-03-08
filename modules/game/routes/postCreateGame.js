@@ -18,7 +18,6 @@ const handler = async (req, res) => {
     title,
     startDateTime, // @todo - is this needed at this time if users will schedule this.
     endDateTime,
-    pot, // @todo should the user creating this game set the pot already? No but we should keep track of the pot in general.
     streamURL,
     status,
     entryFee,
@@ -29,7 +28,6 @@ const handler = async (req, res) => {
     title,
     startDateTime,
     endDateTime: endDateTime || '',
-    pot: pot || 0.00,
     streamURL: streamURL || '',
     status: status || 'pending',
     participants: [], // Initially empty. Who is actually in the game.  NOT who has placed a wager on a contest.
@@ -42,10 +40,33 @@ const handler = async (req, res) => {
     await withdraw(userId, entryFee, db);
 
     // If no errors from the withdraw
-    insertObj.pot = entryFee;
     const data = await db.collection(collection.GAME_COLL_NAME).insertOne(insertObj);
 
-    if (data.insertedCount) return response.success(insertObj);
+    // Create a contest & add the user.
+    const contestObj = {
+      title: 'Default contest for game.',
+      description: 'Default contest for game.',
+      minEntryFee: entryFee,
+      gameId: data.ops[0]._id,
+      status: 'active',
+      participants: [userId],
+      createdDateTime: new Date(),
+      updatedDateTime: new Date(),
+      pot: entryFee
+    };
+
+    const contest = await db.collection(collection.CONTEST_COLL_NAME).insertOne(contestObj);
+
+    // Add the participants and contests to this game
+    await db.collection(collection.GAME_COLL_NAME).updateOne(
+      { _id: data.ops[0]._id },
+      { $set: {
+        participants: [userId],
+        contests: [contest.ops[0]._id]
+      } }
+    );
+
+    if (data.insertedCount && contest.insertedCount) return response.success(insertObj);
 
     return response.error('Could not create game.  Unknown error', 400);
   } catch (error) {
@@ -68,7 +89,6 @@ module.exports = fastify => fastify.route({
         title: { type: 'string', description: 'Game title displayed to user.' },
         startDateTime: { type: 'string', format: 'date-time', description: 'Start date time of game.' },
         endDateTime: { type: 'string', format: 'date-time', description: 'End date time of game' },
-        pot: { type: 'number', description: 'total amount in pot' },
         streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.' },
         status: { type: 'string', description: 'Game status', enum: ['active', 'pending', 'in_progress', 'distributing_pot', 'paused', 'completed' ] },
         entryFee: { type: 'number', description: 'Cost to enter the game' }

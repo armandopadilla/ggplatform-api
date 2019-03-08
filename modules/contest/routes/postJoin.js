@@ -1,59 +1,58 @@
 /**
- * Join a specific contest
+ * DO NOT USE DO NOT USE - gtgsidebet functionality ONLY
+ * Join a specific contest - Not required for team vs team.
  *
- * @todo - is the user making the request the owner?
- *
- * FE sends BE request to join a contest
- *  System checks the entry fee.
+ * FE sends BE contest to join and account that wants to join
+ * System checks if the game has a default contest.
+ * If so then
  *  System checks if the user has enough funds
  *  If enough funds then withdraw and enter the user into contest
  *  If NOT enough funds return a not-enough-funds error. FE can then take the user to another screen
  */
 const ObjectId = require('mongodb').ObjectId;
-const { response, contestUtils: contest } = require('../../../utils');
+const { response, game:gameUtils, contest:contestUtils } = require('../../../utils');
 const { db: collection } = require('../../../config');
 const withdraw = require('../../wallet/events/withdraw');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
-  const { userId } = req.body;
-  const { contestId } = req.params;
+  const {
+    userId,
+    contestId,
+  } = req.body;
+  const { gameId } = req.params;
 
-  // Check if the contestId is valid.
-  if (!ObjectId.isValid(contestId)) return response.error('Invalid contest id', 400);
+  // Check if the gameId is valid.
+  if (!ObjectId.isValid(gameId)) return response.error('Invalid game Id', 400);
 
   // Check if the userId is valid
   if (!ObjectId.isValid(userId)) return response.error('Invalid user Id', 400);
 
   try {
-    // can join the contest?
-    await contestUtils.canJoinContest(contestId, userId, db);
+    // Check if the user can join the game
+    gameUtils.canJoinGame(userId, gameId, db);
 
     // Check if the user can join the contest
-    const wallet = await db.collection(collection.WALLET_COLL_NAME).findOne({ ownerId: ObjectId(userId) });
-    const contest = await db.collection(collection.CONTEST_COLL_NAME).findOne({ _id: ObjectId(contestId) });
+    contestUtils.canJoinContest(contestId, userId, db);
 
     // If ready to enter into contest...
-    if (wallet.balance >= contest.entryFee) {
-      const data = await db.collection(collection.CONTEST_COLL_NAME).updateOne(
-        { _id: ObjectId(contestId) },
-        { $addToSet: { participants: userId.toString() } },
-      );
+    // Add the user to the contest
+    const data = await db.collection(collection.CONTEST_COLL_NAME).updateOne(
+      { _id: ObjectId(contestId) },
+      { $addToSet: { participants: userId.toString() } },
+    );
 
-      // All good so withdraw funds.
-      if (data.matchedCount) {
-        await withdraw(userId, contest.entryFee, db);
+    // Widthdraw funds from the wallet.
+    if (data.matchedCount) {
+      await withdraw(userId, contest.entryFee, db);
 
-        // Update the pot
-        const newPot = contest.pot + contest.entryFee;
-        await db.collection(collection.CONTEST_COLL_NAME).updateOne({
-          _id: ObjectId(contestId)
-        }, { $set: { pot: newPot } });
+      // Update the pot
+      const newPot = contest.pot + contest.entryFee;
+      await db.collection(collection.CONTEST_COLL_NAME).updateOne({
+        _id: ObjectId(contestId)
+      }, { $set: { pot: newPot } });
 
-        return response.success({});
-      }
-    } else {
-      return response.error('Not enough funds', 400);
+      return response.success({});
     }
   } catch (error) {
     return response.error(error);
@@ -66,9 +65,9 @@ module.exports = fastify => fastify.route({
   url: '/:contestId/join',
   handler,
   schema: {
-    tags: ['Contest'],
-    description: 'Join a specific contest',
-    summary: 'Join contest',
+    tags: ['Game'],
+    description: 'Join a specific game',
+    summary: 'Join game',
     body: {
       type: 'object',
       properties: {
@@ -77,7 +76,7 @@ module.exports = fastify => fastify.route({
       required: ['userId']
     },
     params: {
-      contestId: { type: 'string', description: 'Unique contest id to join.' },
+      contestId: { type: 'string', description: 'Unique game id to join.' },
     },
     response: {
       200: {
