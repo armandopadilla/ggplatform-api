@@ -131,11 +131,20 @@ Contest - GET /contest/my-contests (see API docs above)
 
 
 # To Do
-## Admin Tool
 
 1. Stripe integration
+    1. Deposit
+    1. Escrow Deposit - Contest, user enters contest
+    1. Withdraw
+    1. Escrow Withdraw - Contest, user leaves
+    1. Create account - User
+    1. Escrow Create account - Contest (holds the money for the contest)
 1. Fetch game state - API integraiton with X service
 1. Issue out pot
+
+## Backlog
 1. Update Game - a bunch of questions to answer but not show stoppers.
 1. Delete Game - a bunch of questions but not show stopper.
 1. Leave a contest - what happens when they leave?
+1. Admin
+1. Hook up event logger

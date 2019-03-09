@@ -1,6 +1,7 @@
 const { ObjectID } = require('mongodb');
 const { db: collection } = require('../../../config');
 const { sendDepositReceiptEmail } = require('../../../helpers/email');
+const { bankDeposit } = require('../service');
 
 /**
  * Deposit funds into a wallet. Will not be open to public.
@@ -19,6 +20,11 @@ const deposit = async (userId, amount, db) => {
       ownerId: ObjectID(userId)
     });
 
+    // Deposit Funds
+    // 1. Into bank account
+    await bankDeposit(userBankAccountId, amount);
+
+    // 2. Into our system
     const newBalance = parseFloat(wallet.balance + amount);
     const updatedWallet = await db.collection(collection.WALLET_COLL_NAME).updateOne(
       { ownerId: ObjectID(userId) },

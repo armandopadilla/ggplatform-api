@@ -20,6 +20,12 @@ const create = async (userId, db) => {
 
   try {
     await db.collection(collection.WALLET_COLL_NAME).insertOne(walletInfo);
+
+    // Create the bank account for this user.
+    const bankInfo = await bankCreateAccount(userId);
+
+    // Update our system.
+
     return walletInfo;
   } catch (error) {
     throw Error(error);
