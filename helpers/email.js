@@ -17,12 +17,29 @@ const sendWelcomeEmail = async (email) => {
   return await sendEmail(subject, body, email);
 };
 
-const sendDepositReceiptEmail = async (email) => {
+// When the user deposits money into the account.
+const sendDepositReceiptEmail = async (email, amount) => {
   const subject = 'X Account Deposit';
-  const body = 'Looks like you deposited $X.00. Coo. Your X success team!';
+  const body = `Looks like you deposited $${amount.toFixed(2)}. Coo. Your X success team!`;
   return await sendEmail(subject, body, email);
 };
 
+
+// Used when the user takes out money for match reasons.
+const sendWidthdrawReceiptEmail = async (email, amount) => {
+  const subject = 'X Account Widthraw';
+  const body = `Looks like you widthrew $${amount.toFixed(2)} to join a match. Coo! If you did not initiate this transaction
+     dont sweat it, email our support success team and we'll sort this out for you. Your X success team!`;
+  return await sendEmail(subject, body, email);
+};
+
+// Used when a user takes out money from their wallet.  For non match reasons.
+const sendWidthdrawFundsReceiptEmail = async (email, amount) => {
+  const subject = 'X Account Widthraw';
+  const body = `Looks like you widthrew ${amount.toFixed(2)} to join a match. Coo! If you did not initiate this transaction
+    dont sweat it, email our support success team and we'll sort this out for you. Your X success team!`;
+  return await sendEmail(subject, body, email);
+};
 
 const sendLeaveGameEmail = async(email) => {
   const subject = 'X You Left Contest';
@@ -40,4 +57,5 @@ module.exports = {
   sendWelcomeEmail,
   sendDepositReceiptEmail,
   sendLeaveGameEmail,
+  sendWidthdrawReceiptEmail,
 };
