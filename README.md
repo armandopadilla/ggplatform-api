@@ -139,8 +139,10 @@ Contest - GET /contest/my-contests (see API docs above)
     1. Escrow Withdraw - Contest, user leaves
     1. Create account - User
     1. Escrow Create account - Contest (holds the money for the contest)
-1. Fetch game state - API integraiton with X service
-1. Issue out pot
+1. Match Source Data Integration - API integraiton with X service
+1. Post game mechanics - Dispurse pot.
+1. Banking
+
 
 ## Backlog
 1. Update Game - a bunch of questions to answer but not show stoppers.
