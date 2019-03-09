@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongodb');
 const { db: collection } = require('../../../config');
 const { sendWidthdrawReceiptEmail } = require('../../../helpers/email');
+const { bankWithdraw } = require('../service');
 
 /**
  * Withdraw funds from a wallet. This is also part of other transactions.
@@ -30,12 +31,18 @@ const withdraw = async (userId, amount, db) => {
     if (wallet.balance < parseFloat(amount)) throw Error('Not enough funds.');
 
     // Withdraw!
+    // 1. From bank
+    const userBankAccountId = 123;
+    await bankWithdraw(userBankAccountId, amount);
+
+    // 2. Our system
     const newBalance = parseFloat(wallet.balance - amount);
     const updatedWallet = await db.collection(collection.WALLET_COLL_NAME).updateOne(
       { _id: ObjectId(wallet._id) },
       { $set: { balance: newBalance } },
     );
 
+    // Send out receipt
     if (updatedWallet.matchedCount) {
       // Send out a receipt
       const userInfo = await db.collection(collection.USER_COLL_NAME).findOne({
