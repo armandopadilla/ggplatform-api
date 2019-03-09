@@ -60,7 +60,7 @@ const runner = async () => {
         status: 'awarded'
       }
     });
-    
+
   });
 
 };
