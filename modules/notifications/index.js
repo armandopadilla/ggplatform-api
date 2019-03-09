@@ -16,7 +16,39 @@ const sendPush = (text) => {
   // Do the push
 };
 
-const sendText = (text) => {}
+
+/**
+ * Send a text message to someone.
+ *
+ * @param phoneNumber
+ * @param text
+ * @returns {Promise<PromiseResult<SNS.Types.PublishResponse, AWSError>>}
+ */
+const sendText = async (phoneNumber, text) => {
+  if (!phoneNumber) throw Error('Phone number required');
+  if (!text) throw Error('Text message required.');
+
+  const params = {
+    Message: text,
+    PhoneNumber: phoneNumber
+  };
+
+  const smsSettings = {
+    attributes: {
+      'DefaultSenderID': 'WiredPanda',
+      'DefaultSMSType': 'Promotional'
+    }
+  };
+
+  const sns = new AWS.SNS({
+    accessKeyId: aws.auth.ACCESS_KEY_ID,
+    secretAccessKey: aws.auth.SECRET_KEY,
+    region: aws.sns.region
+  });
+
+  await sns.setSMSAttributes(smsSettings).promise();
+  return await sns.publish(params).promise();
+}
 
 /**
  * Send email

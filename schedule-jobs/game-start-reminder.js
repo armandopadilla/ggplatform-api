@@ -3,33 +3,52 @@
  * Will send out reminders to only the participants.
  *
  */
+const async = require('async');
 const moment = require('moment');
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient, ObjectId } = require('mongodb');
 const config = require('../config');
 const dbInfo = config.db;
+const { sendGameAboutToStartTxt } = require('../helpers/text');
 
 const dbClient = new MongoClient(dbInfo.connInfo.url);
-return dbClient.connect((err) => {
 
-  const db = dbClient.db(dbInfo.connInfo.dbName);
+const START_TIME = 15;
+const TIME_FRAME = 'minutes';
 
-  return db.collection(dbInfo.GAME_COLL_NAME)
-    .find({
-      startDateTime: { eq: moment().add(15, 'minutes') } //Starts in 15 minutes.
-    })
-    .toArray()
-    .then((games) => {
-      return games.forEach((game) => {
+const getConn = async () => {
+  return await dbClient.connect();
+};
 
-        const participants = game.participants;
-        participants.forEach((user) => {
-          console.log(user);
-          // Send out a message
-        });
+const runner = async () => {
 
-      });
+  const conn = await getConn();
+  const db = await dbClient.db(dbInfo.connInfo.dbName);
+
+  const games = await db.collection(dbInfo.GAME_COLL_NAME).find({
+    startDateTime: { eq: moment().add(START_TIME, TIME_FRAME) } //Starts in 15 minutes.
+  }).toArray();
+
+  async.each(games, (game, cb) => {
+
+    const {participants} = game;
+
+    async.each(participants, async(user, cb2) => {
+
+      const userInfo = await db.collection(dbInfo.USER_COLL_NAME).findOne({ _id: ObjectId(user) });
+
+      // Send out a message - Async
+      const { number } = userInfo;
+      await sendGameAboutToStartTxt(number);
+
+      cb2();
+    }, (err) => {
+      cb();
     });
-});
+
+  }, () => {
+    process.exit(0);
+  });
+};
 
 
-
+runner();
