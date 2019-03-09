@@ -7,6 +7,8 @@
  *  Who ...
  * Those are contests since a user can place X into it.
  *
+ * Status = pending | in progress | completed | awarded
+ *
  * @todo Security - Only admin can do this.
  *
  * @param req
