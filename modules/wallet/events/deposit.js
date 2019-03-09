@@ -1,5 +1,6 @@
 const { ObjectID } = require('mongodb');
 const { db: collection } = require('../../../config');
+const { sendDepositReceiptEmail } = require('../../../helpers/email');
 
 /**
  * Deposit funds into a wallet. Will not be open to public.
@@ -24,7 +25,15 @@ const deposit = async (userId, amount, db) => {
       { $set: { balance: newBalance } },
     );
 
-    return (updatedWallet.matchedCount);
+    if (updatedWallet.matchedCount) {
+      // Send out a receipt
+      const userInfo = await db.collection(collection.USER_COLL_NAME).findOne({
+        _id: ObjectId(userId),
+      });
+
+      await sendDepositReceiptEmail(userInfo.email, amount);
+      return (updatedWallet.matchedCount);
+    }
   }
   catch (error) {
     throw Error(error);

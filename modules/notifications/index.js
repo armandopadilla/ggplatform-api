@@ -7,17 +7,6 @@ const {
 
 
 /**
- * Send push message
- *
- * @param text
- */
-const sendPush = (text) => {
-  // Grab the text
-  // Do the push
-};
-
-
-/**
  * Send a text message to someone.
  *
  * @param phoneNumber
@@ -88,7 +77,6 @@ const sendEmail = async (subject, body, to) => {
 
 
 module.exports = {
-  sendPush,
   sendEmail,
   sendText
 };

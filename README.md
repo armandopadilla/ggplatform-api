@@ -134,7 +134,6 @@ Contest - GET /contest/my-contests (see API docs above)
 ## Admin Tool
 
 1. Stripe integration
-1. Reminders 
 1. Fetch game state - API integraiton with X service
 1. Issue out pot
 1. Update Game - a bunch of questions to answer but not show stoppers.

@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongodb');
 const { db: collection } = require('../../../config');
+const { sendWidthdrawReceiptEmail } = require('../../../helpers/email');
 
 /**
  * Withdraw funds from a wallet. This is also part of other transactions.
@@ -35,7 +36,15 @@ const withdraw = async (userId, amount, db) => {
       { $set: { balance: newBalance } },
     );
 
-    if (updatedWallet.matchedCount) return wallet;
+    if (updatedWallet.matchedCount) {
+      // Send out a receipt
+      const userInfo = await db.collection(collection.USER_COLL_NAME).findOne({
+        _id: ObjectId(userId),
+      });
+
+      await sendWidthdrawReceiptEmail(userInfo.email, amount);
+      return wallet;
+    }
     throw new Error('Could not update wallet. Unknown error.');
   }
   catch (error) {
