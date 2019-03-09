@@ -32,7 +32,7 @@ module.exports = {
       region: 'us-west-2'
     },
     sns: {
-
+      region: 'us-west-2'
     },
     sqs: {
 

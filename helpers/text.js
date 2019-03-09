@@ -1,5 +1,7 @@
+const { sendText } = require('../modules/notifications');
+
 const sendGameAboutToStartTxt = async (phoneNumber) => {
-  const message = "gtgchamp - Your match is about to start!"
+  const message = "gtgchamp - Your match is about to start!";
   return await sendText(phoneNumber, message);
 };
 
