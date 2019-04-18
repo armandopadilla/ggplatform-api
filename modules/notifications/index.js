@@ -72,6 +72,8 @@ const sendEmail = async (subject, body, to) => {
     Source: company.COMPANY_WELCOME_FROM_EMAIL_ADDRESS,
   };
 
+  // Should i fail the system if we dont send out an email?
+  // I dont think so BUT we should alert and monitor.
   return await ses.sendEmail(params).promise();
 };
 

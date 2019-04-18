@@ -35,6 +35,8 @@ const handler = async (req, res) => {
     acceptedTerms,
   } = req.body;
 
+  console.log(req.body);
+
   const hashPass = auth.getHash(password);
   const userObj = {
     firstName,
@@ -113,7 +115,7 @@ module.exports = fastify => fastify.route({
         dob: { type: 'string', format: 'date-time', description: '10/03/1981' },
         acceptedTerms: { type: 'string', description: 'Indicates if user has accepted the TOS', enum: ['yes', 'no'] },
       },
-      required: ['firstName', 'username', 'password', 'dob', 'acceptedTerms']
+      required: ['username', 'password', 'dob', 'acceptedTerms']
     },
     response: {
       200: {

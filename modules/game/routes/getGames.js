@@ -15,6 +15,7 @@ const handler = async (req, res) => {
     const games = await db.collection(collection.GAME_COLL_NAME)
       .find({}).toArray();
 
+    console.log(games);
     const total = games.length;
 
     return response.success(games || [], total);
@@ -47,7 +48,12 @@ module.exports = fastify => fastify.route({
                 endDateTime: {type: 'string', format: 'date-time', description: 'End date time of game'},
                 pot: {type: 'number', description: 'total amount in pot'},
                 streamURL: {type: 'string', description: 'Streaming service URL. Used to stream video.'},
-                status: {type: 'string', description: 'Game status'}
+                status: {type: 'string', description: 'Game status'},
+                entryFee: { type: 'number' },
+                participants: { type: "array", items: { type: "string" } },
+                name: { type: 'string' },
+                matchType: { type: 'string' },
+                maxParticipants: { type: 'number' }
               }
             }
           },
