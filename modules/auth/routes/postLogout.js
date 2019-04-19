@@ -14,7 +14,7 @@ const handler = async (req, res) => {
   const token = authorization.replace('Bearer', '').trim();
   if (!token) return res.send({});
 
-  cache.del(token);
+  await cache.delAsync(token);
   return res.send({});
 };
 
