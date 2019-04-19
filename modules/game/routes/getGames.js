@@ -15,7 +15,6 @@ const handler = async (req, res) => {
     const games = await db.collection(collection.GAME_COLL_NAME)
       .find({}).toArray();
 
-    console.log(games);
     const total = games.length;
 
     return response.success(games || [], total);

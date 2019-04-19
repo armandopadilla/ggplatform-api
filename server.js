@@ -13,9 +13,13 @@ fastify.use(cors());
 fastify.register(require('fastify-boom'));
 fastify.register(require('fastify-mongodb'), config.db.connInfo);
 
+const bluebird = require('bluebird');
+const redis = require('redis').createClient({ host: 'localhost', port: 6379 })
+
+bluebird.promisifyAll(redis);
 
 fastify.register(require('fastify-redis'), {
-  host: '127.0.0.1',
+  client: redis,
 });
 
 fastify.register(require('fastify-swagger'), {

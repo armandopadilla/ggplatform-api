@@ -11,7 +11,7 @@ const { db: collection } = require('../../../config');
 const handler = async (req, res) => {
   const { db, cache } = res.context.config;
 
-  const { id: userId } = await auth.getSessionInfo(req, cache);
+  const { id: userId} = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unathorized request', 401);
 
   // Check the userId is valid and present
