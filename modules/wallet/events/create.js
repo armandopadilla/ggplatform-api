@@ -1,5 +1,6 @@
 const { ObjectID } = require('mongodb');
 const { db: collection } = require('../../../config');
+const { bankCreateAccount } = require('../service');
 
 /**
  * Create a wallet.  For now this happens as part of another transactions

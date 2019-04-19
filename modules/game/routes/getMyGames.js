@@ -11,7 +11,7 @@ const { db: collection } = require('../../../config');
 const handler = async (req, res) => {
   const { db, cache } = res.context.config;
 
-  const { id: userId } = await auth.getSessionInfo(req, cache);
+  const { id: userId} = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unathorized request', 401);
 
   // Check the userId is valid and present
@@ -67,7 +67,11 @@ module.exports = fastify => fastify.route({
                 pot: {type: 'number', description: 'total amount in pot'},
                 streamURL: {type: 'string', description: 'Streaming service URL. Used to stream video.'},
                 status: {type: 'string', description: 'Game status'},
-                entryFee: { type: 'number', description: 'Cost to enter the game' }
+                entryFee: { type: 'number' },
+                participants: { type: "array", items: { type: "string" } },
+                name: { type: 'string' },
+                matchType: { type: 'string' },
+                maxParticipants: { type: 'number' }
               }
             }
           },

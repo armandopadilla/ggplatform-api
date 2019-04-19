@@ -17,16 +17,24 @@ const getSessionInfo = async (req, cache) => {
   const { authorization } = req.headers;
 
   // Fetch the value from the header
-  if (authorization == undefined) return {};
+  if (authorization == undefined) return Promise.resolve({});
 
-  const token = authorization.replace('Bearer', '').trim();
-  const tokenInfo = await cache.get(token);
+  const tokenRaw = authorization.replace('Bearer', '').trim();
+  const tokenData = await cache.getAsync(tokenRaw);
 
-  if (!tokenInfo) return {};
+  if (!tokenData) return {};
 
-  const { salt } = JSON.parse(tokenInfo);
-  const decoded = jwt.verify(token, salt);
-  return decoded;
+  const { salt, token } = JSON.parse(tokenData);
+
+  try {
+    const decoded = await jwt.verify(token, salt);
+    return decoded;
+  } catch(e){
+    console.log(e);
+    return {}
+  }
+
+
 };
 
 module.exports = {

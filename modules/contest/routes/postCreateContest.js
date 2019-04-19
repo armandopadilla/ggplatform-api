@@ -52,6 +52,7 @@ const handler = async (req, res) => {
       createdDateTime: new Date(),
       updatedDateTime: new Date(),
       pot: pot || 0,
+      winners: [] // List of users who won.
     };
 
     const contest = await db.collection(collection.CONTEST_COLL_NAME).insertOne(contestObj);
