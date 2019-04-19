@@ -8,9 +8,33 @@
 const { ObjectId } = require('mongodb').ObjectID;
 const { response } = require('../../../utils');
 const { db: collection, errors } = require('../../../config');
+const { getWinPercent } = require('../../../utils/stats');
+
+
+/**
+ * Get the player information.
+ */
+const getPlayerInfo = async (playerId, db) => {
+  const playerInfo = await db.collection(collection.USER_COLL_NAME).findOne({
+    _id: ObjectId(playerId)
+  });
+
+  // Get the stats for the player
+  if (!playerInfo) return;
+
+  playerInfo.stats = {
+    winPercent: await getWinPercent(playerId, db)
+  };
+
+  return playerInfo;
+
+}
+
 
 const handler = async (req, res) => {
   const { gameId } = req.params;
+  const { playerInfo = false } = req.query;
+
   const { db } = res.context.config;
 
   if (!ObjectId.isValid(gameId)) return response.error('Invalid Game Id', 400);
@@ -26,6 +50,20 @@ const handler = async (req, res) => {
     // Grab the bets
     // @todo - link up with bets.
     game.contests = [];
+
+    // Grab the game participants (these are NOT the betting/contest participants)
+    // Maybe move this stuff over into its own location.
+    if (playerInfo) {
+      const playersInfoPromises = game.participants.map((playerId) => {
+        return getPlayerInfo(playerId, db);
+      })
+
+      const playersInfo = await Promise.all(playersInfoPromises);
+      // Remove any empty info.
+      game.playersInfo = playersInfo.filter(info => info != null);
+    }
+
+    console.log(game);
     return response.success(game);
   } catch (error) {
     return response.error(error);
@@ -43,6 +81,9 @@ module.exports = fastify => fastify.route({
     params: {
       contestId: { type: 'string', description: 'Unique game Id' }
     },
+    querystring: {
+      playerInfo: { type: 'string' }
+    },
     response: {
       200: {
         description: 'Successful response',
@@ -58,7 +99,27 @@ module.exports = fastify => fastify.route({
               pot: { type: 'number', description: 'total amount in pot' },
               streamURL: { type: 'string', description: 'Streaming service URL. Used to stream video.' },
               status: { type: 'string', description: 'Game status' },
-              entryFee: { type: 'number', description: 'Cost to enter the game' }
+              entryFee: { type: 'number', description: 'Cost to enter the game' },
+              participants: { type: "array", items: { type: "string" } },
+              name: { type: 'string' },
+              matchType: { type: 'string' },
+              maxParticipants: { type: 'number' },
+              playersInfo: {
+                type: 'array',
+                items: {
+                  type: "object",
+                  properties: {
+                    _id: { type: 'string' },
+                    username: { type: 'string' },
+                    stats: {
+                      type: 'object',
+                      properties: {
+                        winPercent: { type: 'number' }
+                      }
+                    }
+                  }
+                },
+                description: 'List of players participating in the game.' },
             }
           }
         }
