@@ -33,18 +33,22 @@ const handler = async (req, res) => {
   const { cache, db } = res.context.config;
   const { email, password } = req.body;
 
-  const user = await db.collection(collection.USER_COLL_NAME).findOne({ email });
+  try {
+    const user = await db.collection(collection.USER_COLL_NAME).findOne({ email });
 
-  if (!user || !auth.isValid(password, user.password)) return response.error('Invalid login', 401);
+    if (!user || !auth.isValid(password, user.password)) return response.error('Invalid login', 401);
 
-  const tokenInfo = await getNewTokenInfo(user, password);
+    const tokenInfo = await getNewTokenInfo(user, password);
 
-  // Save in session store (cache)
-  await cache.set(tokenInfo.token, JSON.stringify(tokenInfo));
-
-  return response.success({
-    token: tokenInfo.token,
-  });
+    // Save in session store (cache)
+    const x = await cache.setAsync(tokenInfo.token, JSON.stringify(tokenInfo));
+    return response.success({
+      token: tokenInfo.token,
+    });
+  }
+  catch (e) {
+    console.error(e);
+  }
 };
 
 module.exports = fastify => fastify.route({
