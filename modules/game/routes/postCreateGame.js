@@ -16,7 +16,7 @@ const handler = async (req, res) => {
 
   const {
     title,
-    startDateTime, // @todo - is this needed at this time if users will schedule this.
+    startDateTime,
     endDateTime,
     streamURL,
     status,
