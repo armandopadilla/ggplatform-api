@@ -1,17 +1,20 @@
 /**
- * Get a specific account
+ * TEMP TEMP TEMP TEMP TEMP
  *
  * @todo Can users fetch the profiles of other users? I would say yes, to see their wins, loss, and jackpots won.
  */
 const ObjectId = require('mongodb').ObjectID;
-const { response } = require('../../../utils');
+const { response, auth } = require('../../../utils');
 const { db: collection, errors } = require('../../../config');
 const { getUserStats } = require('../../../utils/stats');
 
 const handler = async (req, res) => {
-  const { userId } = req.params;
-  const { db } = res.context.config;
+  const { db, cache } = res.context.config;
 
+  const { id: userId} = await auth.getSessionInfo(req, cache);
+  if (!userId) return response.error('Unathorized request', 401);
+
+  // Check the userId is valid and present
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
@@ -39,7 +42,7 @@ const handler = async (req, res) => {
 
 module.exports = fastify => fastify.route({
   method: 'GET',
-  url: '/:userId',
+  url: '/profile',
   handler,
   schema: {
     tags: ['User'],
@@ -120,6 +123,7 @@ module.exports = fastify => fastify.route({
     }
   },
   config: {
-    db: fastify.mongo.db, // This seems off.
+    db: fastify.mongo.db,
+    cache: fastify.redis,
   },
 });

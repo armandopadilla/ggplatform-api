@@ -3,6 +3,7 @@ const getUsers = require('./routes/getUsers');
 const postCreateUser = require('./routes/postCreateUser');
 const patchUpdateUser = require('./routes/patchUpdateUser');
 const deleteUser = require('./routes/deleteSoftDeleteUser');
+const getUserProfile = require('./routes/getUserProfile');
 
 module.exports = (fastify, options, next) => {
 
@@ -20,6 +21,9 @@ module.exports = (fastify, options, next) => {
 
   // PATCH - /user
   deleteUser(fastify);
+
+  // GET /user/profile - TEMP TEMP TEMP TEMP TEMP
+  getUserProfile(fastify);
 
   next();
 };
