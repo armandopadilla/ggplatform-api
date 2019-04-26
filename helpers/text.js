@@ -5,6 +5,13 @@ const sendGameAboutToStartTxt = async (phoneNumber) => {
   return await sendText(phoneNumber, message);
 };
 
+
+const sendInviteText = async (phone) => {
+  const message = "Your friend wants to compete with you. Come join ggChamp.";
+  return await sendText(phone, message);
+}
+
 module.exports = {
   sendGameAboutToStartTxt,
+  sendInviteText,
 };
