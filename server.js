@@ -41,6 +41,7 @@ fastify.register(require('fastify-swagger'), {
       { name: 'Wallet', description: 'Wallet related end-points' },
       { name: 'Contest', description: 'Bet/Betting related end-points' },
       { name: 'Game', description: 'Game related end-points' },
+      { name: 'Invite', description: 'Invite users to the site.' },
     ],
     securityDefinitions: {
       apiKey: {
@@ -56,6 +57,8 @@ fastify.register(require('fastify-swagger'), {
 fastify.register(require('./modules/user'), { prefix: '/v1/user' });
 fastify.register(require('./modules/game'), { prefix: '/v1/game' });
 fastify.register(require('./modules/auth'), { prefix: '/v1/auth' });
+fastify.register(require('./modules/invites'), { prefix: '/v1/invite' });
+
 //fastify.register(require('./modules/wallet'), { prefix: '/wallet' });
 //fastify.register(require('./modules/contest'), { prefix: '/contest/:contestId/betbucket' });
 
@@ -63,6 +66,7 @@ const start = async () => {
   try {
     await fastify.listen(3000);
     fastify.log.info(`server listening on ${fastify.server.address().post}`);
+    console.log(`server listening on ${fastify.server.address().post}`)
   } catch (err) {
     console.log(err);
     fastify.log.error(err);

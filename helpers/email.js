@@ -53,9 +53,17 @@ const sendLeaveContestEmail = async (email) => {
   return await sendEmail(subject, body, email);
 };
 
+const sendInviteEmail = async (email) => {
+  const subject = "You've been invited to compete!";
+  const body = 'Hey, your buddy has just invited you to compete.  Come join us where you can schedule a game, play your game, come back and see what you won.\n\nggChamp.com';
+  return await sendEmail(subject, body, email);
+}
+
+
 module.exports = {
   sendWelcomeEmail,
   sendDepositReceiptEmail,
   sendLeaveGameEmail,
   sendWidthdrawReceiptEmail,
+  sendInviteEmail,
 };
