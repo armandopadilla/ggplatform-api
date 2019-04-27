@@ -10,6 +10,7 @@ const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db, cache } = res.context.config;
+  const { limit=5, skip=0 } = req.query;
 
   const { id: userId} = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unathorized request', 401);
@@ -26,12 +27,22 @@ const handler = async (req, res) => {
 
     // Wondering if this is better than updating a "games" list held onto
     // the account object.
+    const options = {
+      limit,
+      skip
+    };
+
     const games = await db.collection(collection.GAME_COLL_NAME)
+      .find({
+        participants: userId
+      }, options).toArray();
+
+    const gamesCount = await db.collection(collection.GAME_COLL_NAME)
       .find({
         participants: userId
       }).toArray();
 
-    const total = games.length;
+    const total = gamesCount.length;
 
     return response.success(games || [], total);
   } catch (error) {
@@ -48,7 +59,9 @@ module.exports = fastify => fastify.route({
     description: 'Fetch all the games a specific user participants in.',
     summary: 'Fetch user games',
     querystring: {
-      userId: { type: "string", description: "Unique account Id." }
+      userId: { type: "string", description: "Unique account Id." },
+      limit: { type: 'number' },
+      skip: { type: 'number' }
     },
     response: {
       200: {

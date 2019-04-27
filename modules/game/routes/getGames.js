@@ -10,12 +10,22 @@ const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
+  const { limit=5, skip=0 } = req.query;
 
   try {
+    const options = {
+      limit,
+      skip
+    };
+
     const games = await db.collection(collection.GAME_COLL_NAME)
+      .find({}, options)
+      .toArray();
+
+    const gamesCount = await db.collection(collection.GAME_COLL_NAME)
       .find({}).toArray();
 
-    const total = games.length;
+    const total = gamesCount.length;
 
     return response.success(games || [], total);
   } catch (error) {
@@ -26,11 +36,16 @@ const handler = async (req, res) => {
 module.exports = fastify => fastify.route({
   method: 'GET',
   url: '/list',
+
   handler,
   schema: {
     tags: ['Game'],
     description: 'Fetch a list of all games in the system',
     summary: 'Fetch games',
+    queryString: {
+      limit: { type: 'number' },
+      skip: { type: 'number' }
+    },
     response: {
       200: {
         description: 'Successful response',
