@@ -1,0 +1,60 @@
+/**
+ * Fetch a specific wallet.
+ *
+ * @param accountId
+ * @param fastify
+ */
+const ObjectID = require('mongodb').ObjectId;
+const { db: collection } = require('../../../config');
+const { auth, response } = require('../../../utils');
+
+const handler = async (req, res) => {
+  const { db, cache } = res.context.config;
+
+  const { id: userId} = await auth.getSessionInfo(req, cache);
+  if (!userId) return response.error('Unathorized request', 401);
+
+  // Check the userId is valid and present
+  if (!ObjectID.isValid(userId)) return response.error('Invalid User Id', 400);
+
+  const wallet = await db.collection(collection.WALLET_COLL_NAME).findOne({
+    ownerId: ObjectID(userId),
+  });
+
+  if (wallet) return response.success(wallet);
+  return {};
+};
+
+
+module.exports = fastify => fastify.route({
+  method: 'GET',
+  url: '/my-wallet',
+  handler,
+  schema: {
+    tags: ['Wallet'],
+    description: 'Fetch the logged in users wallet.',
+    summary: 'Fetch user wallet',
+    response: {
+      200: {
+        description: 'Successful response',
+        type: 'object',
+        properties: {
+          "data": {
+            type: 'object',
+            properties: {
+              ownerId: { type: 'string', description: 'Unique owner id.' },
+              balance: { type: 'number', description: 'Current balance in this wallet.' },
+              currency: { type: 'string', description: 'Currency type.' },
+              createdDate: { type: 'string', format: 'date-time', description: 'Date Time of wallet creation.' },
+              updateDate: { type: 'string', format: 'date-time', description: 'Date Time of wallet last update.' }
+            }
+          }
+        }
+      }
+    }
+  },
+  config: {
+    db: fastify.mongo.db,
+    cache: fastify.redis,
+  },
+});
