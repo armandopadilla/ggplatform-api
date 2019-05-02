@@ -10,7 +10,8 @@ const error = (errorMessage, statusCode) => {
   if (
     statusCode === 400 ||
     errorMessage.toString().indexOf('Not enough funds') > -1 ||
-    errorMessage.toString().indexOf('User already a participant') > -1
+    errorMessage.toString().indexOf('User already a participant') > -1 ||
+    errorMessage.toString().indexOf('amount must') > -1
   ) return Boom.badRequest(errorMessage);
 
   return Boom.badImplementation(errorMessage);

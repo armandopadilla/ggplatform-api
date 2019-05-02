@@ -67,7 +67,16 @@ module.exports = fastify => fastify.route({
               },
               transactions: {
                 type: 'array',
-                items: { type: 'object' }
+                items: {
+                  type: 'object',
+                  properties: {
+                    _id: { type: 'string' },
+                    description: { type: 'string' },
+                    type: { type: 'string' },
+                    amount: { type: 'number' },
+                    createdDate: { type: 'string' }
+                  }
+                }
               }
             }
           }

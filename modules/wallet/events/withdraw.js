@@ -44,6 +44,17 @@ const withdraw = async (userId, amount, db) => {
 
     // Send out receipt
     if (updatedWallet.matchedCount) {
+      // Add the trx to the system
+      await db.collection(collection.WALLET_TRXS_COLL_NAME).insertOne({
+        type: 'Withdraw',
+        description: 'User Init Withdraw',
+        amount: amount,
+        walletId: ObjectId(wallet._id),
+        initByUserId: ObjectId(userId),
+        status: 'pending',
+        createdDate: new Date()
+      });
+
       // Send out a receipt
       const userInfo = await db.collection(collection.USER_COLL_NAME).findOne({
         _id: ObjectId(userId),

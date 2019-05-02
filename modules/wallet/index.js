@@ -1,6 +1,7 @@
 const getWallets = require('./routes/getWallets');
 const getWallet = require('./routes/getWallet');
 const getMyWallet = require('./routes/getMyWallet');
+const postWithdraw = require('./routes/postWithdraw');
 
 module.exports = (fastify, opts, next) => {
 
@@ -12,6 +13,10 @@ module.exports = (fastify, opts, next) => {
 
   // GET - /wallet/my-wallet
   getMyWallet(fastify);
+
+
+  // POST - /wallet/withdraw
+  postWithdraw(fastify);
 
   next();
 };
