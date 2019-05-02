@@ -28,7 +28,7 @@ const sendDepositReceiptEmail = async (email, amount) => {
 // Used when the user takes out money for match reasons.
 const sendWidthdrawReceiptEmail = async (email, amount) => {
   const subject = 'X Account Widthraw';
-  const body = `Looks like you widthrew $${amount.toFixed(2)} to join a match. Coo! If you did not initiate this transaction
+  const body = `Looks like you widthrew $${parseFloat(amount).toFixed(2)} to join a match. Coo! If you did not initiate this transaction
      dont sweat it, email our support success team and we'll sort this out for you. Your X success team!`;
   return await sendEmail(subject, body, email);
 };
