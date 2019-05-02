@@ -21,7 +21,20 @@ const handler = async (req, res) => {
     ownerId: ObjectID(userId),
   });
 
-  if (wallet) return response.success(wallet);
+  let transactions = [];
+  if (wallet) {
+    transactions = await db.collection(collection.WALLET_TRXS_COLL_NAME)
+      .find({
+        walletId: ObjectID(wallet._id)
+      }).toArray();
+  }
+
+  const info = {
+    wallet,
+    transactions,
+  };
+
+  if (wallet) return response.success(info);
   return {};
 };
 
@@ -42,11 +55,20 @@ module.exports = fastify => fastify.route({
           "data": {
             type: 'object',
             properties: {
-              ownerId: { type: 'string', description: 'Unique owner id.' },
-              balance: { type: 'number', description: 'Current balance in this wallet.' },
-              currency: { type: 'string', description: 'Currency type.' },
-              createdDate: { type: 'string', format: 'date-time', description: 'Date Time of wallet creation.' },
-              updateDate: { type: 'string', format: 'date-time', description: 'Date Time of wallet last update.' }
+              wallet: {
+                type: 'object',
+                properties: {
+                  ownerId: { type: 'string', description: 'Unique owner id.' },
+                  balance: { type: 'number', description: 'Current balance in this wallet.' },
+                  currency: { type: 'string', description: 'Currency type.' },
+                  createdDate: { type: 'string', format: 'date-time', description: 'Date Time of wallet creation.' },
+                  updateDate: { type: 'string', format: 'date-time', description: 'Date Time of wallet last update.' }
+                }
+              },
+              transactions: {
+                type: 'array',
+                items: { type: 'object' }
+              }
             }
           }
         }

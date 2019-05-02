@@ -7,6 +7,7 @@ module.exports = {
     },
     USER_COLL_NAME: 'users',
     WALLET_COLL_NAME: 'wallets',
+    WALLET_TRXS_COLL_NAME: 'wallet_trxs',
     EVENTLOGGER_COLL_NAME: 'event_logger',
     GAME_COLL_NAME: 'games',
     CONTEST_COLL_NAME: 'contests'
