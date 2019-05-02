@@ -22,6 +22,9 @@ const deposit = async (userId, amount, db) => {
 
     // Deposit Funds
     // 1. Into bank account
+    const userBankAccountId = 123;
+    amount = parseFloat(amount);
+
     await bankDeposit(userBankAccountId, amount);
 
     // 2. Into our system
@@ -32,9 +35,20 @@ const deposit = async (userId, amount, db) => {
     );
 
     if (updatedWallet.matchedCount) {
+      // Add the trx to the system
+      await db.collection(collection.WALLET_TRXS_COLL_NAME).insertOne({
+        type: 'Deposit',
+        description: 'User Init Deposit',
+        amount: amount,
+        walletId: ObjectID(wallet._id),
+        initByUserId: ObjectID(userId),
+        status: 'pending',
+        createdDate: new Date()
+      });
+
       // Send out a receipt
       const userInfo = await db.collection(collection.USER_COLL_NAME).findOne({
-        _id: ObjectId(userId),
+        _id: ObjectID(userId),
       });
 
       await sendDepositReceiptEmail(userInfo.email, amount);

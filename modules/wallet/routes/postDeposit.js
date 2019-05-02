@@ -1,11 +1,11 @@
 /**
- * Withdraw Funds.
+ * Deposit Funds.
  *
  */
 const ObjectId = require('mongodb').ObjectId;
 const { response, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
-const withdraw = require('../events/withdraw');
+const deposit = require('../events/deposit');
 
 const handler = async (req, res) => {
   const { db, cache } = res.context.config;
@@ -18,7 +18,7 @@ const handler = async (req, res) => {
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
-    await withdraw(userId, amount, db);
+    await deposit(userId, amount, db);
     return response.success();
   } catch (error) {
     return response.error(error);
@@ -27,23 +27,21 @@ const handler = async (req, res) => {
 
 module.exports = fastify => fastify.route({
   method: 'POST',
-  url: '/withdraw',
+  url: '/deposit',
   handler,
   schema: {
     tags: ['Wallet'],
-    description: 'Withdraw funds from a user wallet',
-    summary: 'Withdraw funds',
+    description: 'Deposit funds for a user wallet',
+    summary: 'Deposit funds',
     body: {
-      amount: { type: 'number' }
+      amount: { type: 'number' },
     },
     response: {
       200: {
         description: 'Successful response',
         type: 'object',
         properties: {
-          "data": {
-            type: 'object'
-          }
+          "data": {}
         }
       },
       400: {
