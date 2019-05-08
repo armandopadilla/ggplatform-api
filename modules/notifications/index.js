@@ -47,34 +47,40 @@ const sendText = async (phoneNumber, text) => {
  * @param to
  */
 const sendEmail = async (subject, body, to) => {
-  const ses = new AWS.SES({
-    accessKeyId: aws.auth.ACCESS_KEY_ID,
-    secretAccessKey: aws.auth.SECRET_KEY,
-    region: aws.ses.region
-  });
+  try {
+    const ses = new AWS.SES({
+      accessKeyId: aws.auth.ACCESS_KEY_ID,
+      secretAccessKey: aws.auth.SECRET_KEY,
+      region: aws.ses.region
+    });
 
-  const params = {
-    Destination: {
-      ToAddresses: [to]
-    },
-    Message: {
-      Body: {
-        Html: {
+    const params = {
+      Destination: {
+        ToAddresses: [to]
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: "UTF-8",
+            Data: body
+          }
+        },
+        Subject: {
           Charset: "UTF-8",
-          Data: body
+          Data: subject
         }
       },
-      Subject: {
-        Charset: "UTF-8",
-        Data: subject
-      }
-    },
-    Source: company.COMPANY_WELCOME_FROM_EMAIL_ADDRESS,
-  };
+      Source: company.COMPANY_WELCOME_FROM_EMAIL_ADDRESS,
+    };
 
-  // Should i fail the system if we dont send out an email?
-  // I dont think so BUT we should alert and monitor.
-  return await ses.sendEmail(params).promise();
+    // Should i fail the system if we dont send out an email?
+    // I dont think so BUT we should alert and monitor.
+    return await ses.sendEmail(params).promise();
+  }
+  catch(e) {
+    console.error(e);
+    return;
+  }
 };
 
 
