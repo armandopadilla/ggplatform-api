@@ -3,13 +3,14 @@
  * 1. Send out a welcome email
  * 2. Add the account to the system.
  */
+const uuidV4 = require('uuid/v4');
 const { response } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
   const {
-    name,
+    contactName,
     contactEmail,
     streetAddress,
     city,
@@ -19,22 +20,27 @@ const handler = async (req, res) => {
   } = req.body;
 
   const insertObj = {
-    name,
+    contactName,
     contactEmail,
     streetAddress,
     city,
     state,
     country,
-    postalCode
+    postalCode,
+    clientId: '',
+    applications: [], // Holds all the applications for this client,
+    createdDate: new Date(),
+    updatedDate: new Date()
   };
 
+  // Save the new account
   try {
-    const data = await db.collection(collection.GAME_COLL_NAME).insertOne(insertObj);
+    // Generate a new CLIENT_ID - the account holders overall Id NOT the same as the app the client will use the apis with
+    const uuid = uuidV4();
+    insertObj.clientId = uuid;
 
-    if (data.insertedCount) return response.success(insertObj);
-
-    // When is this triggered???
-    return response.error('Could not create game.  Unknown error', 400);
+    const data = await db.collection(collection.ACCOUNT_COLL_NAME).insertOne(insertObj);
+    return response.success();
   } catch (error) {
     return response.error(error);
   }
@@ -52,7 +58,7 @@ module.exports = fastify => fastify.route({
     body: {
       type: 'object',
       properties: {
-        name: { type: 'string', description: 'Name on account, company name.' },
+        contactName: { type: 'string', description: 'Name on account, company name.' },
         contactEmail: { type: 'string', format: 'email', description: 'Contact email for account.' },
         streetAddress: { type: 'string', description: 'Street address' },
         city: { type: 'string', description: 'City' },
@@ -60,7 +66,7 @@ module.exports = fastify => fastify.route({
         country: { type: 'string', description: 'Country' },
         postalCode: { type: 'number', description: 'Postal code' }
       },
-      required: ['name', 'contactEmail', 'streetAddress', 'city', 'state', 'country', 'postalCode'],
+      required: ['contactName', 'contactEmail', 'streetAddress', 'city', 'state', 'country', 'postalCode'],
     },
     response: {
       200: {

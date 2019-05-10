@@ -4,6 +4,9 @@
 const getAccounts = require('./routes/getAccounts');
 const getAccount = require('./routes/getAccount');
 const postCreateAccount = require('./routes/postCreateAccount');
+const updateAccount = require('./routes/putUpdateAccount');
+const deleteAccount = require('./routes/deleteAccount');
+const postCreateApp = require('./routes/postCreateApp');
 
 module.exports = (fastify, opt, next) => {
 
@@ -17,10 +20,13 @@ module.exports = (fastify, opt, next) => {
   postCreateAccount(fastify);
 
   // PUT - /account/:accountId
-  updteAccount(fastify);
+  updateAccount(fastify);
 
   // DELETE - /account/:accountId
   deleteAccount(fastify);
+
+  // POST - /account/:accountId/app
+  postCreateApp(fastify);
 
   next();
 };

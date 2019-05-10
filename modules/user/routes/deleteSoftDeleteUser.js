@@ -13,8 +13,11 @@ const { db: collection } = require('../../../config');
 const handler = async (req, res) => {
   const { userId } = req.params;
   const { db } = res.context.config;
+  const { appId } = req.query;
 
   try {
+    await auth.isValidApp(appId, db);
+
     const data = await db.collection(collection.USER_COLL_NAME)
       .updateOne(
         { id: ObjectID(userId) },

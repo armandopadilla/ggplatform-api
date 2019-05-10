@@ -4,12 +4,14 @@
  * @todo Can users fetch the profiles of other users? I would say yes, to see their wins, loss, and jackpots won.
  */
 const ObjectId = require('mongodb').ObjectID;
+
 const { response, auth } = require('../../../utils');
 const { db: collection, errors } = require('../../../config');
 const { getUserStats } = require('../../../utils/stats');
 
 const handler = async (req, res) => {
   const { db, cache } = res.context.config;
+  const { appId } = req.query;
 
   const { id: userId} = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unathorized request', 401);
@@ -18,6 +20,8 @@ const handler = async (req, res) => {
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
+    await auth.isValidApp(appId, db);
+
     const user = await db.collection(collection.USER_COLL_NAME)
       .findOne({ _id: ObjectId(userId) });
 

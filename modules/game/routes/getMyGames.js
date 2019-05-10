@@ -10,7 +10,7 @@ const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db, cache } = res.context.config;
-  const { limit=5, skip=0 } = req.query;
+  const { limit=5, skip=0, appId } = req.query;
 
   const { id: userId} = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unathorized request', 401);
@@ -19,6 +19,8 @@ const handler = async (req, res) => {
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
+    await auth.isValidApp(appId, db);
+
     const user = await db.collection(collection.USER_COLL_NAME).findOne({
       _id: ObjectId(userId)
     });
@@ -84,7 +86,8 @@ module.exports = fastify => fastify.route({
                 participants: { type: "array", items: { type: "string" } },
                 name: { type: 'string' },
                 matchType: { type: 'string' },
-                maxParticipants: { type: 'number' }
+                maxParticipants: { type: 'number' },
+                startTimezone: { type: 'string' }
               }
             }
           },

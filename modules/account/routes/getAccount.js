@@ -17,7 +17,7 @@ const handler = async (req, res) => {
 
   try {
     const account = await db.collection(collection.ACCOUNT_COLL_NAME).findOne({
-      _id: ObjectId(gameId)
+      _id: ObjectId(accountId)
     });
 
     return response.success(account);
@@ -41,7 +41,28 @@ module.exports = fastify => fastify.route({
         type: 'object',
         properties: {
           "data": {
-            type: 'object'
+            type: 'object',
+            properties: {
+              _id: {type: 'string'},
+              contactName: { type: 'string', description: 'Name on account, company name.' },
+              contactEmail: { type: 'string', format: 'email', description: 'Contact email for account.' },
+              streetAddress: { type: 'string', description: 'Street address' },
+              city: { type: 'string', description: 'City' },
+              state: { type: 'string', description: 'State/Province' },
+              country: { type: 'string', description: 'Country' },
+              postalCode: { type: 'number', description: 'Postal code' },
+              clientId: { type: 'number' },
+              applications: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    name: { type: 'string' },
+                    appId: { type: 'string' }
+                  }
+                }
+              }
+            }
           }
         }
       }

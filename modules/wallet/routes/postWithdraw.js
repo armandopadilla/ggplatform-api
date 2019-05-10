@@ -4,20 +4,23 @@
  */
 const ObjectId = require('mongodb').ObjectId;
 const { response, auth } = require('../../../utils');
-const { db: collection } = require('../../../config');
+const { db: collection, error } = require('../../../config');
 const withdraw = require('../events/withdraw');
 
 const handler = async (req, res) => {
   const { db, cache } = res.context.config;
   const { amount } = req.body;
+  const { appId } = req.query;
 
   const { id: userId} = await auth.getSessionInfo(req, cache);
-  if (!userId) return response.error('Unathorized request', 401);
+  if (!userId) return response.error(error.UNAUTH_REQUEST, 401);
 
   // Check the userId is valid and present
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
+    await auth.isValidApp(appId, db);
+
     await withdraw(userId, amount, db);
     return response.success();
   } catch (error) {

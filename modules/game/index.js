@@ -36,7 +36,7 @@ module.exports = (fastify, opt, next) => {
   patchUpdateGame(fastify);
 
   // DELETE - /game/:gameId
-  deleteRemoveGame(fastify);
+  // deleteRemoveGame(fastify);
 
   // POST - /game/:gameId/join
   postJoin(fastify);

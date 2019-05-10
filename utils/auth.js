@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const { db: collection, errors } = require('../config');
+
 const getSalt = () => bcrypt.genSaltSync(10);
 
 const getHash = (text, salt) => {
@@ -33,8 +35,22 @@ const getSessionInfo = async (req, cache) => {
     console.log(e);
     return {}
   }
+};
 
+const isValidApp = async (appId='', db) => {
+  if (!appId) throw Error(`${errors.INVALID_APP_ID} - APP_ID: ${appId}`);
 
+  // Check if the App id is in the system
+  const data = await db.collection(collection.ACCOUNT_COLL_NAME)
+    .findOne({
+      applications: { $elemMatch: { appId } }
+    });
+
+  if (data) {
+    return true;
+  }
+
+  throw Error(`${errors.INVALID_APP_ID} - APP_ID: ${appId}`);
 };
 
 module.exports = {
@@ -42,4 +58,5 @@ module.exports = {
   isValid,
   getSalt,
   getSessionInfo,
+  isValidApp,
 };

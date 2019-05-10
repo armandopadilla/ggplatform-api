@@ -19,6 +19,7 @@ const handler = async (req, res) => {
     contestId,
   } = req.body;
   const { gameId } = req.params;
+  const { appId } = req.query;
 
   const { id: userId } = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unauthorized request', 401);
@@ -30,6 +31,8 @@ const handler = async (req, res) => {
   if (!ObjectId.isValid(userId)) return response.error('Invalid user Id', 400);
 
   try {
+    await auth.isValidApp(appId, db);
+
     // Check if the user can join the game
     await gameUtils.canJoinGame(userId, gameId, db);
 

@@ -9,7 +9,7 @@
  *  log this event for auditing.
  */
 const ObjectId = require('mongodb').ObjectId;
-const { response } = require('../../../utils');
+const { response, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
 const { sendLeaveGameEmail } = require('../../../helpers/email');
 const { wallet } = require('../../../utils');
@@ -18,6 +18,7 @@ const handler = async (req, res) => {
   const { db } = res.context.config;
   const { userId } = req.body;
   const { gameId } = req.params;
+  const { appId } = req.query;
 
   if (!ObjectId.isValid(gameId)) return response.error('Invalid game Id', 400);
 
@@ -25,6 +26,8 @@ const handler = async (req, res) => {
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
+    await auth.isValidApp(appId, db);
+
     const user = await db.collection(collection.ACCOUNT_COLL_NAME).findOne({
       _id: ObjectId(userId)
     });

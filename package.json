@@ -27,7 +27,8 @@
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.24.0",
     "mongodb": "^3.1.4",
-    "supertest": "^3.3.0"
+    "supertest": "^3.3.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "eslint": "^5.6.0",

@@ -4,7 +4,7 @@
  *
  * @todo - Auth
  */
-const { response, auth } = require('../../../utils');
+const { response, auth, getMaxParticipants } = require('../../../utils');
 const { db: collection } = require('../../../config');
 const withdraw = require('../../wallet/events/withdraw');
 
@@ -14,6 +14,8 @@ const handler = async (req, res) => {
   const { id: userId } = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unauthorized request', 401);
 
+  const { appId } = req.query;
+
   const {
     title,
     startDateTime,
@@ -21,6 +23,9 @@ const handler = async (req, res) => {
     streamURL,
     status,
     entryFee,
+    matchType,
+    matchName,
+    startTimezone,
   } = req.body;
 
 
@@ -34,11 +39,18 @@ const handler = async (req, res) => {
     entryFee,
     contests: [], // Holds ids of all the contests this game contains.
     createdBy: userId,
+    name: matchName,
+    matchType: matchType,
+    maxParticipants: getMaxParticipants(matchType),
+    startTimezone,
   };
 
   try {
+    await auth.isValidApp(appId, db);
+
     await withdraw(userId, entryFee, db);
 
+    console.log(insertObj);
     // If no errors from the withdraw
     const data = await db.collection(collection.GAME_COLL_NAME).insertOne(insertObj);
 

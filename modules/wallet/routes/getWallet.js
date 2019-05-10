@@ -6,17 +6,24 @@
  */
 const ObjectID = require('mongodb').ObjectId;
 const { db: collection } = require('../../../config');
+const { response } = require('../../../utils');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
   const { walletId } = req.params;
+  const { appId } = req.query;
 
-  const wallet = await db.collection(collection.WALLET_COLL_NAME).findOne({
-    _id: ObjectID(walletId),
-  });
+  try {
+    await auth.isValidApp(appId, db);
 
-  if (wallet) return wallet;
-  return {};
+    const wallet = await db.collection(collection.WALLET_COLL_NAME)
+      .findOne({ _id: ObjectID(walletId) });
+
+    if (wallet) return wallet;
+    return response.success();
+  } catch (e) {
+    response.error(e);
+  }
 };
 
 

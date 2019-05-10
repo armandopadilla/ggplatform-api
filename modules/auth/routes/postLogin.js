@@ -8,7 +8,7 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { response, auth } = require('../../../utils');
-const { db: collection } = require('../../../config');
+const { db: collection, errors } = require('../../../config');
 
 const getNewTokenInfo = async (user, password) => {
   const data = {
@@ -32,8 +32,11 @@ const getNewTokenInfo = async (user, password) => {
 const handler = async (req, res) => {
   const { cache, db } = res.context.config;
   const { email, password } = req.body;
+  const { appId } = req.query;
 
   try {
+    await auth.isValidApp(appId, db);
+
     const user = await db.collection(collection.USER_COLL_NAME).findOne({ email });
 
     if (!user || !auth.isValid(password, user.password)) return response.error('Invalid login', 401);
@@ -48,6 +51,7 @@ const handler = async (req, res) => {
   }
   catch (e) {
     console.error(e);
+    return response.error(e);
   }
 };
 

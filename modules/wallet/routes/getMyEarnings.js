@@ -10,6 +10,7 @@ const { auth, response } = require('../../../utils');
 
 const handler = async (req, res) => {
   const { db, cache } = res.context.config;
+  const { appId } = req.query;
 
   const { id: userId} = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unathorized request', 401);
@@ -17,36 +18,43 @@ const handler = async (req, res) => {
   // Check the userId is valid and present
   if (!ObjectID.isValid(userId)) return response.error('Invalid User Id', 400);
 
-  const wallet = await db.collection(collection.WALLET_COLL_NAME).findOne({
-    ownerId: ObjectID(userId),
-  });
+  try {
+    await auth.isValidApp(appId, db);
 
-  let myEarnings = 0.00;
-  if (wallet) {
-    const earnings = await db.collection(collection.WALLET_TRXS_COLL_NAME)
-      .aggregate([
-        {
-          $match: {
-            walletId: ObjectID(wallet._id),
-            description: "MATCH WIN"
-          }
-        },
-        {
-          $group: { _id: "walletId", sum: { $sum: "$amount" } }
-        }]
-      ).toArray();
+    const wallet = await db.collection(collection.WALLET_COLL_NAME).findOne({
+      ownerId: ObjectID(userId),
+    });
 
-    if (earnings.length) {
-      myEarnings = earnings[0].sum.toFixed(2);
+    let myEarnings = 0.00;
+    if (wallet) {
+      const earnings = await db.collection(collection.WALLET_TRXS_COLL_NAME)
+        .aggregate([
+          {
+            $match: {
+              walletId: ObjectID(wallet._id),
+              description: "MATCH WIN"
+            }
+          },
+          {
+            $group: { _id: "walletId", sum: { $sum: "$amount" } }
+          }]
+        ).toArray();
+
+      if (earnings.length) {
+        myEarnings = earnings[0].sum.toFixed(2);
+      }
     }
+
+    const info = {
+      myEarnings
+    };
+
+    if (wallet) return response.success(info);
+    return response.success();
+  } catch (e) {
+    return response.error(e);
   }
 
-  const info = {
-    myEarnings
-  };
-
-  if (wallet) return response.success(info);
-  return {};
 };
 
 

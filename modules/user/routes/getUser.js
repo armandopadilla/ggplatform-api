@@ -10,11 +10,14 @@ const { getUserStats } = require('../../../utils/stats');
 
 const handler = async (req, res) => {
   const { userId } = req.params;
+  const { appId } = req.query;
   const { db } = res.context.config;
 
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
+    await auth.isValidApp(appId, db);
+
     const user = await db.collection(collection.USER_COLL_NAME)
       .findOne({ _id: ObjectId(userId) });
 

@@ -4,7 +4,6 @@ const error = (errorMessage, statusCode) => {
   // Log things here.
   // @todo fastify.log.error(errorMessage);
 
-  console.log(errorMessage)
   if (statusCode === 404) return Boom.notFound(errorMessage);
   if (statusCode === 401) return Boom.unauthorized(errorMessage);
   if (
@@ -13,6 +12,9 @@ const error = (errorMessage, statusCode) => {
     errorMessage.toString().indexOf('User already a participant') > -1 ||
     errorMessage.toString().indexOf('amount must') > -1
   ) return Boom.badRequest(errorMessage);
+  if (errorMessage.toString().indexOf('Invalid APP') > -1) {
+    return Boom.badRequest(errorMessage);
+  }
 
   return Boom.badImplementation(errorMessage);
 };

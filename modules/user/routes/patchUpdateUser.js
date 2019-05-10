@@ -3,9 +3,8 @@
  *
  */
 const { ObjectID } = require('mongodb');
-const { response } = require('../../../utils');
-const { db: collection } = require('../../../config');
-const { errors } = require('../../../config');
+const { response, auth } = require('../../../utils');
+const { db: collection, errors } = require('../../../config');
 const {
   isEmailTaken,
   isUsernameTaken
@@ -20,6 +19,8 @@ const handler = async (req, res) => {
     email
   } = req.body;
 
+  const { appId } = req.query;
+
   const updateObj = {
     firstName,
     username,
@@ -27,6 +28,8 @@ const handler = async (req, res) => {
   };
 
   try {
+    await auth.isValidApp(appId, db);
+
     const usersCollection = db.collection(collection.USER_COLL_NAME);
     const currentUserData = await usersCollection.findOne({ _id: ObjectID(userId) });
 

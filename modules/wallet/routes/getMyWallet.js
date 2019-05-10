@@ -10,6 +10,7 @@ const { auth, response } = require('../../../utils');
 
 const handler = async (req, res) => {
   const { db, cache } = res.context.config;
+  const { appId } = req.query;
 
   const { id: userId} = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unathorized request', 401);
@@ -17,25 +18,32 @@ const handler = async (req, res) => {
   // Check the userId is valid and present
   if (!ObjectID.isValid(userId)) return response.error('Invalid User Id', 400);
 
-  const wallet = await db.collection(collection.WALLET_COLL_NAME).findOne({
-    ownerId: ObjectID(userId),
-  });
+  try {
+    await auth.isValidApp(appId, db);
 
-  let transactions = [];
-  if (wallet) {
-    transactions = await db.collection(collection.WALLET_TRXS_COLL_NAME)
-      .find({
-        walletId: ObjectID(wallet._id)
-      }).toArray();
+    const wallet = await db.collection(collection.WALLET_COLL_NAME).findOne({
+      ownerId: ObjectID(userId),
+    });
+
+    let transactions = [];
+    if (wallet) {
+      transactions = await db.collection(collection.WALLET_TRXS_COLL_NAME)
+        .find({
+          walletId: ObjectID(wallet._id)
+        }).toArray();
+    }
+
+    const info = {
+      wallet,
+      transactions,
+    };
+
+    if (wallet) return response.success(info);
+    return response.success();
+  } catch (e) {
+    return response.error(e);
   }
 
-  const info = {
-    wallet,
-    transactions,
-  };
-
-  if (wallet) return response.success(info);
-  return {};
 };
 
 

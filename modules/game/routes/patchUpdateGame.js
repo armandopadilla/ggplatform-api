@@ -13,6 +13,7 @@ const { db: collection } = require('../../../config');
 const handler = async (req, res) => {
   const { gameId } = req.params;
   const { db, cache } = res.context.config;
+  const { appId } = req.query;
 
   const { id: userId } = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unauthorized request', 401);
@@ -34,6 +35,8 @@ const handler = async (req, res) => {
   if (!ObjectID.isValid(gameId)) return response.error('Invalid game Id', 400);
 
   try {
+    await auth.isValidApp(appId, db);
+
     const data = await db.collection(collection.GAME_COLL_NAME).updateOne(
       { _id: ObjectID(gameId) },
       { $set: updateObj },

@@ -54,6 +54,7 @@ fastify.register(require('fastify-swagger'), {
 });
 
 // Register all endpoints
+fastify.register(require('./modules/account'), { prefix: '/v1/account' });
 fastify.register(require('./modules/user'), { prefix: '/v1/user' });
 fastify.register(require('./modules/game'), { prefix: '/v1/game' });
 fastify.register(require('./modules/auth'), { prefix: '/v1/auth' });
