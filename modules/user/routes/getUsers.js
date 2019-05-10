@@ -2,13 +2,16 @@
  * Get a list of users
  *
  */
-const { response } = require('../../../utils');
+const { response, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
+  const { appId } = req.query;
 
   try {
+    await auth.isValidApp(appId, db);
+
     const users = await db.collection(collection.USER_COLL_NAME)
       .find({})
       .toArray();

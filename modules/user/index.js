@@ -17,10 +17,10 @@ module.exports = (fastify, options, next) => {
   postCreateUser(fastify);
 
   // PATCH /user
-  patchUpdateUser(fastify);
+  //patchUpdateUser(fastify);
 
   // PATCH - /user
-  deleteUser(fastify);
+  //deleteUser(fastify);
 
   // GET /user/profile - TEMP TEMP TEMP TEMP TEMP
   getUserProfile(fastify);

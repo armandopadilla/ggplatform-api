@@ -10,6 +10,7 @@ const deposit = require('../events/deposit');
 const handler = async (req, res) => {
   const { db, cache } = res.context.config;
   const { amount } = req.body;
+  const { appId } = req.query;
 
   const { id: userId} = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unathorized request', 401);
@@ -18,6 +19,8 @@ const handler = async (req, res) => {
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
 
   try {
+    await auth.isValidApp(appId, db);
+
     await deposit(userId, amount, db);
     return response.success();
   } catch (error) {

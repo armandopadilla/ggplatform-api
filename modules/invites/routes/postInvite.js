@@ -5,22 +5,24 @@ const { sendInviteText } = require('../../../helpers/text');
 const { sendInviteEmail } = require('../../../helpers/email');
 
 const handler = async (req, res) => {
-  const { cache } = res.context.config;
+  const { db, cache } = res.context.config;
   const {
     invite1,
     invite2 = '',
     invite3 = '',
   } = req.body;
 
-  /*
+  const { appId } = req.query;
+
   const { id: userId} = await auth.getSessionInfo(req, cache);
   if (!userId) return response.error('Unathorized request', 401);
 
   // Check the userId is valid and present
   if (!ObjectId.isValid(userId)) return response.error('Invalid User Id', 400);
-*/
 
   try {
+    await auth.isValidApp(appId, db);
+
     // Foreach of the entries check what it is.
     const invites = [invite1, invite2, invite3];
 
@@ -61,6 +63,9 @@ module.exports = fastify => fastify.route({
         invite3: { type: 'string', description: 'Mobile Phone or Email' }
       },
       required: ['invite1']
+    },
+    querystring: {
+      appId: { type: 'string' }
     },
     response: {
       200: {

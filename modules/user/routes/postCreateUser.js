@@ -35,7 +35,7 @@ const handler = async (req, res) => {
     acceptedTerms,
   } = req.body;
 
-  console.log(req.body);
+  const { appId } = req.query;
 
   const hashPass = auth.getHash(password);
   const userObj = {

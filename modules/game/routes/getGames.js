@@ -5,14 +5,16 @@
  * @todo - filtering and sorting.
  * @todo - Pagination.
  */
-const { response } = require('../../../utils');
+const { response, auth } = require('../../../utils');
 const { db: collection } = require('../../../config');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
-  const { limit=5, skip=0 } = req.query;
+  const { limit=5, skip=0, appId } = req.query;
 
   try {
+    await auth.isValidApp(appId, db);
+
     const options = {
       limit,
       skip
@@ -67,7 +69,8 @@ module.exports = fastify => fastify.route({
                 participants: { type: "array", items: { type: "string" } },
                 name: { type: 'string' },
                 matchType: { type: 'string' },
-                maxParticipants: { type: 'number' }
+                maxParticipants: { type: 'number' },
+                startTimezone: { type: 'string' }
               }
             }
           },

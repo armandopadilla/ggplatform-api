@@ -5,12 +5,21 @@
  * @param fastify
  */
 const { db: collection } = require('../../../config');
+const { response } = require('../../../utils/responseHandlers');
 
 const handler = async (req, res) => {
   const { db } = res.context.config;
+  const { appId } = req.query;
 
-  const wallets = await db.collection(collection.WALLET_NAME).find().toArray();
-  return wallets || [];
+  try {
+    await auth.isValidApp(appId, db);
+
+    const wallets = await db.collection(collection.WALLET_NAME).find().toArray();
+
+    return response.success(wallets || []);
+  } catch (e) {
+    response.error(e);
+  }
 };
 
 module.exports = fastify => fastify.route({

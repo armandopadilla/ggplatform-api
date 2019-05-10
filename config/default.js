@@ -10,7 +10,8 @@ module.exports = {
     WALLET_TRXS_COLL_NAME: 'wallet_trxs',
     EVENTLOGGER_COLL_NAME: 'event_logger',
     GAME_COLL_NAME: 'games',
-    CONTEST_COLL_NAME: 'contests'
+    CONTEST_COLL_NAME: 'contests',
+    ACCOUNT_COLL_NAME: 'accounts'
   },
   errors: {
     USER_NOT_FOUND: 'User not found',
@@ -20,6 +21,8 @@ module.exports = {
     USER_USERNAME_EXISTS: 'Username already in use.',
     USER_EMAIL_EXISTS: 'Email already in use.',
     CONTEST_NOT_FOUND: 'Contest not found',
+    INVALID_APP_ID: 'Invalid APP ID',
+    UNAUTH_REQUEST: 'Unathorized request',
   },
   server: {
     logger: true

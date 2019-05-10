@@ -6,7 +6,7 @@
  * @todo do we need a list of contests?  - Hook
  */
 const { ObjectId } = require('mongodb').ObjectID;
-const { response } = require('../../../utils');
+const { response, auth } = require('../../../utils');
 const { db: collection, errors } = require('../../../config');
 const { getWinPercent } = require('../../../utils/stats');
 
@@ -33,13 +33,15 @@ const getPlayerInfo = async (playerId, db) => {
 
 const handler = async (req, res) => {
   const { gameId } = req.params;
-  const { playerInfo = false } = req.query;
+  const { playerInfo = false, appId } = req.query;
 
   const { db } = res.context.config;
 
   if (!ObjectId.isValid(gameId)) return response.error('Invalid Game Id', 400);
 
   try {
+    await auth.isValidApp(appId, db);
+
     const game = await db.collection(collection.GAME_COLL_NAME)
       .findOne(
         { _id: ObjectId(gameId) },
@@ -104,6 +106,7 @@ module.exports = fastify => fastify.route({
               name: { type: 'string' },
               matchType: { type: 'string' },
               maxParticipants: { type: 'number' },
+              startTimezone: { type: 'string' },
               playersInfo: {
                 type: 'array',
                 items: {
