@@ -24,7 +24,7 @@
     "fastify-redis": "^2.0.0",
     "fastify-swagger": "^0.15.1",
     "joi": "^13.6.0",
-    "jsonwebtoken": "^8.3.0",
+    "jsonwebtoken": "^9.0.0",
     "moment": "^2.24.0",
     "mongodb": "^3.1.4",
     "supertest": "^3.3.0",
